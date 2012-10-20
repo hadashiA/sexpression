@@ -1,0 +1,24 @@
+{
+  "name": "sexpression",
+  "version": "0.0.0",
+  "description": "s-expression parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "vows --spec --isolate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:f-kubotar/sexpression.git"
+  },
+  "keywords": [
+    "s-expression",
+    "sexp",
+    "sexpression",
+    "emacs"
+  ],
+  "devDependencies": {
+    "vows": "*"
+  },
+  "author": "hadashiA",
+  "license": "BSD"
+}
