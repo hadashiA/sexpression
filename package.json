@@ -4,7 +4,7 @@
   "description": "s-expression parser",
   "main": "index.js",
   "scripts": {
-    "test": "vows --spec --isolate"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,8 @@
     "emacs"
   ],
   "devDependencies": {
-    "vows": "*"
+    "mocha": "*",
+    "expect.js": "*"
   },
   "author": "hadashiA",
   "license": "BSD"

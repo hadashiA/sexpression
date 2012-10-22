@@ -4,17 +4,19 @@ var stringify = (function () {
 });
 
 var parse = (function() {
-  var ParseError = function(message, at, data) {
-    this.name    = 'ParseError';
-    this.message = message;
-    this.at      = at;
-    this.data    = data;
-  };
-
   var StringBuffer = (function() {
     var StringBuffer = function(string) {
       this.string = string;
       this.at     = -1;
+    };
+
+    StringBuffer.prototype.error = function(msg) {
+      throw {
+        name: 'ParseError',
+        message: msg,
+        at: this.at,
+        string: this.string
+      };
     };
 
     StringBuffer.prototype.current = function() {
@@ -23,8 +25,7 @@ var parse = (function() {
 
     StringBuffer.prototype.read = function(expectCurrent) {
       if (expectCurrent && expectCurrent !== this.current()) {
-        throw new ParseError("Expected '" + expectCurrent + "' instead of '" + this.current() + "'",
-                             this.at, this.source);
+        this.error("Expected '" + expectCurrent + "' instead of '" + this.current() + "'");
       }
       return this.string.charAt(++this.at);
     };
@@ -42,14 +43,41 @@ var parse = (function() {
     };
 
     Parser.prototype.white = function() {
-      var ch = this.buf.current();
+      var ch = (this.buf.current() || this.buf.read());
       while (ch && ch <= ' ') {
         ch = this.buf.read();
       }
     };
 
     Parser.prototype.number = function() {
-      
+      var number
+        , string = ''
+        , ch = (this.buf.current() || this.buf.read());
+
+      if (ch === '-') {
+        string = '-';
+        ch = this.buf.read();
+      }
+
+      while (ch >= '0' && ch <= '9') {
+        string += ch;
+        ch = this.buf.read();
+      }
+
+      if (ch === '.') {
+        string += '.';
+        ch = this.buf.read();
+        while (ch >= '0' && ch <= '9') {
+          string += ch;
+          ch = this.buf.read();
+        }
+      }
+
+      number = string - 0;
+      if (isNaN(number)) {
+        this.buf.error('Bad number');
+      }
+      return number;
     }
 
     Parser.prototype.value = function() {
