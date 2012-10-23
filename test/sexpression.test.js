@@ -18,5 +18,18 @@ describe('Sexpression', function() {
     it('should parse decimal number', function() {
       expect(Sexpression.parse('10.309')).to.be(10.309);
     });
+
+    it('should parse blank string', function() {
+      expect(Sexpression.parse('""')).to.be('');
+    });
+
+    it('should parse string', function() {
+      expect(Sexpression.parse('"hogehoge"')).to.be('hogehoge');
+      expect(Sexpression.parse('"aaa bbb cccc ()())) -**x&&789"')).to.be("aaa bbb cccc ()())) -**x&&789");
+    });
+
+    it('should parse multi byte string', function() {
+      expect(Sexpression.parse('"あいうえお熊"')).to.be('あいうえお熊');
+    });
   });
 });

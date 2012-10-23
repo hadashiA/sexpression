@@ -42,45 +42,84 @@ var parse = (function() {
       this.buf = new StringBuffer(source);
     };
 
-    Parser.prototype.white = function() {
+    Parser.prototype.skipWhite = function() {
       var ch = (this.buf.current() || this.buf.read());
       while (ch && ch <= ' ') {
         ch = this.buf.read();
       }
+      return ch;
     };
 
     Parser.prototype.number = function() {
-      var number
-        , string = ''
+      var result = ''
         , ch = (this.buf.current() || this.buf.read());
 
       if (ch === '-') {
-        string = '-';
+        result = '-';
         ch = this.buf.read();
       }
 
       while (ch >= '0' && ch <= '9') {
-        string += ch;
+        result += ch;
         ch = this.buf.read();
       }
 
       if (ch === '.') {
-        string += '.';
+        result += '.';
         ch = this.buf.read();
         while (ch >= '0' && ch <= '9') {
-          string += ch;
+          result += ch;
           ch = this.buf.read();
         }
       }
 
-      number = string - 0;
-      if (isNaN(number)) {
+      result = result - 0;
+      if (isNaN(result)) {
         this.buf.error('Bad number');
       }
-      return number;
-    }
+      return result;
+    };
+
+    Parser.prototype.string = function() {
+      var result = ''
+        , ch = (this.buf.current() || this.buf.read())
+        , quote
+
+      if (ch !== '"') {
+        this.buf.error('Bad string');
+      }
+
+      ch = this.buf.read();
+      while (ch) {
+        if (ch === '"') {
+          return result;
+        } else {
+          result += ch;
+        }
+
+        ch = this.buf.read();
+      }
+
+      this.buf.error('Bad string');
+      return null;
+    };
+
+    Parser.prototype.word = function() {
+      var ch = (this.buf.current() || this.buf.read());
+
+      return null;
+    };
 
     Parser.prototype.value = function() {
+      var ch = this.skipWhite();
+      switch (ch) {
+        case '"':
+        return this.string();
+        case '-':
+        return this.number();
+        default:
+        return ch >= '0' && ch <= '9' ? this.number() : this.word();
+      }
       return this.number();
     };
 
