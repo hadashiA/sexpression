@@ -81,32 +81,17 @@ var parse = (function() {
         , ch = buf.current()
         , backSlashed = false;
 
-      var escapee = {
-          '"': '"'
-        , '\\': '\\'
-        , b: 'b'
-        , f: '\f'
-        , n: '\n'
-        , r: '\r'
-        , t: '\t'
-      };
-
       if (ch !== '"') {
         throw this.error(buf, 'Bad string');
       }
 
       ch = buf.read();
       while (ch) {
-        if (backSlashed) {
-          result += (escapee[ch] || ch);
-        } else if (ch === '"') {
+        if (ch === '"') {
           return result;
-        } else {
-          result += ch;
         }
 
-        backSlashed = (ch === '\\');
-
+        result += ch;
         ch = buf.read();
       }
 

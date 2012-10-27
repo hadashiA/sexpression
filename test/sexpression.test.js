@@ -4,35 +4,43 @@ var expect = require('expect.js')
 describe('Sexpression', function() {
   describe('.parse()', function() {
     describe('Number literal', function() {
-      it('should parse 1 digit number', function() {
+      it('should be 1 digit number', function() {
         expect(Sexpression.parse('1')).to.be(1);
       });
 
-      it('should parse multiple digit number', function() {
+      it('should be multiple digit number', function() {
         expect(Sexpression.parse('392038029380')).to.be(392038029380);
       });
 
-      it('should parse number of minutes', function() {
+      it('should be number of minutes', function() {
         expect(Sexpression.parse('-124')).to.be(-124);
       });
 
-      it('should parse decimal number', function() {
+      it('should be decimal number', function() {
         expect(Sexpression.parse('10.309')).to.be(10.309);
       });
     });
 
     describe('String literal', function() {
-      it('should parse blank string', function() {
+      it('should be blank string', function() {
         expect(Sexpression.parse('""')).to.be('');
       });
 
-      it('should parse string', function() {
+      it('should be string', function() {
         expect(Sexpression.parse('"hogehoge"')).to.be('hogehoge');
         expect(Sexpression.parse('"aaa bbb cccc ()())) -**x&&789"')).to.be("aaa bbb cccc ()())) -**x&&789");
       });
 
-      it('should parse multi byte string', function() {
+      it('should be multi byte string', function() {
         expect(Sexpression.parse('"あいうえお熊"')).to.be('あいうえお熊');
+      });
+
+      it('should be \\n', function() {
+        expect(Sexpression.parse('"\n"')).to.be('\n');
+      });
+
+      it('should be \\t', function() {
+        expect(Sexpression.parse('"\t"')).to.be('\t');
       });
     });
   });
