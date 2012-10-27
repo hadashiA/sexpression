@@ -10,15 +10,6 @@ var parse = (function() {
       this.at     = -1;
     };
 
-    StringBuffer.prototype.error = function(msg) {
-      throw {
-        name: 'ParseError',
-        message: msg,
-        at: this.at,
-        string: this.string
-      };
-    };
-
     StringBuffer.prototype.current = function() {
       return this.string.charAt(this.at);
     };
@@ -34,62 +25,71 @@ var parse = (function() {
       this.string += appended;
     };
 
-    return StringBuffer;
-  })();
-
-  var Parser = (function() {
-    var Parser = function(source) {
-      this.buf = new StringBuffer(source);
-    };
-
-    Parser.prototype.skipWhite = function() {
-      var ch = (this.buf.current() || this.buf.read());
+    StringBuffer.prototype.skipWhiteSpace = function() {
+      var ch = this.read();
       while (ch && ch <= ' ') {
-        ch = this.buf.read();
+        ch = this.read();
       }
       return ch;
     };
 
-    Parser.prototype.number = function() {
+    return StringBuffer;
+  })();
+
+  var parser = {
+    error: function(buf, msg) {
+      return {
+        name: 'ParseError',
+        message: msg,
+        at: buf.at,
+        string: buf.string
+      };
+    },
+
+    number: function(buf) {
       var result = ''
-        , ch = (this.buf.current() || this.buf.read());
+        , ch = (buf.current() || buf.read());
 
       if (ch === '-') {
         result = '-';
-        ch = this.buf.read();
+        ch = buf.read();
       }
 
       while (ch >= '0' && ch <= '9') {
         result += ch;
-        ch = this.buf.read();
+        ch = buf.read();
       }
 
       if (ch === '.') {
         result += '.';
-        ch = this.buf.read();
+        ch = buf.read();
         while (ch >= '0' && ch <= '9') {
           result += ch;
-          ch = this.buf.read();
+          ch = buf.read();
         }
       }
 
       result = result - 0;
       if (isNaN(result)) {
-        this.buf.error('Bad number');
+        throw this.error(buf, 'Bad number');
       }
       return result;
-    };
+    },
 
-    Parser.prototype.string = function() {
+    backQuoteChar: function(buf) {
+
+    },
+
+    string: function(buf) {
       var result = ''
-        , ch = (this.buf.current() || this.buf.read())
+        , ch = (buf.current() || buf.read())
         , quote
 
       if (ch !== '"') {
-        this.buf.error('Bad string');
+        throw this.error(buf, 'Bad string');
       }
 
-      ch = this.buf.read();
+      ch = buf.read();
       while (ch) {
         if (ch === '"') {
           return result;
@@ -97,38 +97,61 @@ var parse = (function() {
           result += ch;
         }
 
-        ch = this.buf.read();
+        ch = buf.read();
       }
 
-      this.buf.error('Bad string');
+      throw this.error(buf, 'Bad string');
       return null;
-    };
+    },
 
-    Parser.prototype.word = function() {
-      var ch = (this.buf.current() || this.buf.read());
+    // symbol: function(buf) {
+    //   var ch = (buf.current() || buf.read())
+    //     , result = '';
 
-      return null;
-    };
+    //   var isSymbolChar = function(first) {
+    //     if (first && !()) {
+    //       return false;
+    //     }
 
-    Parser.prototype.value = function() {
-      var ch = this.skipWhite();
+    //     return ((ch >= 'a' && ch <= 'z') ||
+    //             (ch >= 'A' && ch <= 'Z') ||
+    //             (ch >= '*' && ch <= '/' && ch !== ',') || // * + - . /
+    //             (ch >= ':' && ch <= '?' && ch !== ';') || // : < = > ?
+    //             ()
+    //            );
+    //   }
+
+    //   [-+*\/\\=!?$#@%^&|<>:_\[\].a-zA-Z0-9]
+    //   if (!) {
+    //     this.buf.error('Bad symbol');
+    //   }
+
+    //   while (ch) {
+
+    //   }
+
+    //   return null;
+    // };
+
+    value: function(buf) {
+      var ch = buf.skipWhiteSpace();
+
       switch (ch) {
         case '"':
-        return this.string();
+        return this.string(buf);
         case '-':
-        return this.number();
+        return this.number(buf);
         default:
-        return ch >= '0' && ch <= '9' ? this.number() : this.word();
+        // return ch >= '0' && ch <= '9' ? this.number() : this.symbol(buf);
+        return this.number(buf);
       }
-      return this.number();
-    };
-
-    return Parser;
-  })();
+      return this.number(buf);
+    }
+  }
 
   return function(source) {
-    var parser = new Parser(source);
-    return parser.value();
+    var buf = new StringBuffer(source);
+    return parser.value(buf);
   };
 })();
 
