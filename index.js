@@ -33,6 +33,10 @@ var parse = (function() {
       return ch;
     };
 
+    StringBuffer.prototype.eof = function() {
+      return (this.at >= this.string.length);
+    };
+
     return StringBuffer;
   })();
 
@@ -44,36 +48,6 @@ var parse = (function() {
         at: buf.at,
         string: buf.string
       };
-    },
-
-    number: function(buf) {
-      var result = ''
-        , ch = buf.current();
-
-      if (ch === '-') {
-        result = '-';
-        ch = buf.read();
-      }
-
-      while (ch >= '0' && ch <= '9') {
-        result += ch;
-        ch = buf.read();
-      }
-
-      if (ch === '.') {
-        result += '.';
-        ch = buf.read();
-        while (ch >= '0' && ch <= '9') {
-          result += ch;
-          ch = buf.read();
-        }
-      }
-
-      result = result - 0;
-      if (isNaN(result)) {
-        throw this.error(buf, 'Bad number');
-      }
-      return result;
     },
 
     string: function(buf) {
@@ -100,45 +74,79 @@ var parse = (function() {
     },
 
     symbol: function(buf) {
-      var ch = buf.current()
-        , result = '';
+      var result = ''
+        , ch = buf.current()
+        , firstChar = true
+        , backSlashed = false
+        , escapee = {
+          '"': '"'
+        , "'": "'"
+        , '\\': '\\'
+        , '`': '`'
+        , ',': ','
+        , ' ': ' '
+        // , '#': '#'
+        };
 
-      // var isSymbolChar = function(first) {
-      //   if (first && !()) {
-      //     return false;
-      //   }
+      var isSymbolChar = function() {
+        if (escapee[ch]) {
+          return backSlashed;
+        } else {
+          return ( ch === '!'
+                || ch === '$'
+                || ch === '%'
+                || ch === '&'
+                || ch === '*'
+                || ch === '+'
+                || ch === '-'
+                || ch === '.'
+                || ch === '/'
+                || (ch >= '0' && ch <= '9')
+                || ch === ':'
+                || ch === '<'
+                || ch === '>'
+                || ch === '='
+                || ch === '@'
+                || (ch >= 'A' && ch <= 'Z')
+                || ch === '^'
+                || ch === '_'
+                || (ch >= 'a' && ch <= 'z')
+                || ch === '{'
+                || ch === '}'
+                || ch === '|'
+                || ch === '~');
+        }
+      };
 
-      //   return ((ch >= 'a' && ch <= 'z') ||
-      //           (ch >= 'A' && ch <= 'Z') ||
-      //           (ch >= '*' && ch <= '/' && ch !== ',') || // * + - . /
-      //           (ch >= ':' && ch <= '?' && ch !== ';') || // : < = > ?
-      //           ()
-      //          );
-      // }
+      while (ch && ch !== ' ') {
+        if (!isSymbolChar()) {
+          throw this.error(buf, "Invalid symbol");
+        }
 
-      // [-+*\/\\=!?$#@%^&|<>:_\[\].a-zA-Z0-9]
-      // if (!) {
-      //   this.buf.error('Bad symbol');
-      // }
-
-      while (ch >= 'a' && ch <= 'z') {
         result += ch;
+        backSlashed = (ch === '\\');
         ch = buf.read();
       }
 
-      return result;
+      if (result === '.' || result.length == 0) {
+        throw this.error(buf, "Invalid symbol");
+      }
+
+      if (isNaN(result - 0)) {
+        return result;
+      } else {
+        return (result - 0);
+      }
     },
 
-    value: function(buf) {
+    sExpression: function(buf) {
       var ch = buf.readWhileBlank();
 
       switch (ch) {
         case '"':
         return this.string(buf);
-        case '-':
-        return this.number(buf);
         default:
-        return ch >= '0' && ch <= '9' ? this.number(buf) : this.symbol(buf);
+        return this.symbol(buf)
       }
       return this.number(buf);
     }
@@ -146,7 +154,7 @@ var parse = (function() {
 
   return function(source) {
     var buf = new StringBuffer(source);
-    return parser.value(buf);
+    return parser.sExpression(buf);
   };
 })();
 

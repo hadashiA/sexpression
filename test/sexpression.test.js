@@ -45,9 +45,23 @@ describe('Sexpression', function() {
     });
 
     describe('Symbol', function() {
-      it('should be string of a-z symbol', function() {
+      it('should allow alphabet', function() {
         expect(Sexpression.parse('a')).to.be('a');
         expect(Sexpression.parse('abc')).to.be('abc');
+        expect(Sexpression.parse('A')).to.be('A');
+        expect(Sexpression.parse('DFA')).to.be('DFA');
+      });
+
+      it('should invalid for "." only', function() {
+        expect(function() { Sexpression.parse('.') }).to.throwError();
+      });
+
+      it('should invalid for backquote', function() {
+        expect(function() { Sexpression.parse('`') }).to.throwError();
+      });
+
+      it('should invalid for backquote included', function() {
+        expect(function() { Sexpression.parse('aaa`aaa') }).to.throwError();
       });
     });
   });
