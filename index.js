@@ -25,7 +25,7 @@ var parse = (function() {
       this.string += appended;
     };
 
-    StringBuffer.prototype.skipWhiteSpace = function() {
+    StringBuffer.prototype.readWhileBlank = function() {
       var ch = this.read();
       while (ch && ch <= ' ') {
         ch = this.read();
@@ -48,7 +48,7 @@ var parse = (function() {
 
     number: function(buf) {
       var result = ''
-        , ch = (buf.current() || buf.read());
+        , ch = buf.current();
 
       if (ch === '-') {
         result = '-';
@@ -76,14 +76,20 @@ var parse = (function() {
       return result;
     },
 
-    backQuoteChar: function(buf) {
-
-    },
-
     string: function(buf) {
       var result = ''
-        , ch = (buf.current() || buf.read())
-        , quote
+        , ch = buf.current()
+        , backSlashed = false;
+
+      var escapee = {
+          '"': '"'
+        , '\\': '\\'
+        , b: 'b'
+        , f: '\f'
+        , n: '\n'
+        , r: '\r'
+        , t: '\t'
+      };
 
       if (ch !== '"') {
         throw this.error(buf, 'Bad string');
@@ -91,11 +97,15 @@ var parse = (function() {
 
       ch = buf.read();
       while (ch) {
-        if (ch === '"') {
+        if (backSlashed) {
+          result += (escapee[ch] || ch);
+        } else if (ch === '"') {
           return result;
         } else {
           result += ch;
         }
+
+        backSlashed = (ch === '\\');
 
         ch = buf.read();
       }
@@ -134,9 +144,7 @@ var parse = (function() {
     // };
 
     value: function(buf) {
-      var ch = buf.skipWhiteSpace();
-
-      switch (ch) {
+      switch (buf.readWhileBlank()) {
         case '"':
         return this.string(buf);
         case '-':
