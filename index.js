@@ -99,44 +99,46 @@ var parse = (function() {
       return null;
     },
 
-    // symbol: function(buf) {
-    //   var ch = (buf.current() || buf.read())
-    //     , result = '';
+    symbol: function(buf) {
+      var ch = buf.current()
+        , result = '';
 
-    //   var isSymbolChar = function(first) {
-    //     if (first && !()) {
-    //       return false;
-    //     }
+      // var isSymbolChar = function(first) {
+      //   if (first && !()) {
+      //     return false;
+      //   }
 
-    //     return ((ch >= 'a' && ch <= 'z') ||
-    //             (ch >= 'A' && ch <= 'Z') ||
-    //             (ch >= '*' && ch <= '/' && ch !== ',') || // * + - . /
-    //             (ch >= ':' && ch <= '?' && ch !== ';') || // : < = > ?
-    //             ()
-    //            );
-    //   }
+      //   return ((ch >= 'a' && ch <= 'z') ||
+      //           (ch >= 'A' && ch <= 'Z') ||
+      //           (ch >= '*' && ch <= '/' && ch !== ',') || // * + - . /
+      //           (ch >= ':' && ch <= '?' && ch !== ';') || // : < = > ?
+      //           ()
+      //          );
+      // }
 
-    //   [-+*\/\\=!?$#@%^&|<>:_\[\].a-zA-Z0-9]
-    //   if (!) {
-    //     this.buf.error('Bad symbol');
-    //   }
+      // [-+*\/\\=!?$#@%^&|<>:_\[\].a-zA-Z0-9]
+      // if (!) {
+      //   this.buf.error('Bad symbol');
+      // }
 
-    //   while (ch) {
+      while (ch >= 'a' && ch <= 'z') {
+        result += ch;
+        ch = buf.read();
+      }
 
-    //   }
-
-    //   return null;
-    // };
+      return result;
+    },
 
     value: function(buf) {
-      switch (buf.readWhileBlank()) {
+      var ch = buf.readWhileBlank();
+
+      switch (ch) {
         case '"':
         return this.string(buf);
         case '-':
         return this.number(buf);
         default:
-        // return ch >= '0' && ch <= '9' ? this.number() : this.symbol(buf);
-        return this.number(buf);
+        return ch >= '0' && ch <= '9' ? this.number(buf) : this.symbol(buf);
       }
       return this.number(buf);
     }

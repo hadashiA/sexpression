@@ -43,5 +43,12 @@ describe('Sexpression', function() {
         expect(Sexpression.parse('"\t"')).to.be('\t');
       });
     });
+
+    describe('Symbol', function() {
+      it('should be string of a-z symbol', function() {
+        expect(Sexpression.parse('a')).to.be('a');
+        expect(Sexpression.parse('abc')).to.be('abc');
+      });
+    });
   });
 });
