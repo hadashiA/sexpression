@@ -100,5 +100,11 @@ describe('Sexpression', function() {
         expect(Sexpression.parse("aaa\\`bbb")).to.be(Sexpression.intern("aaa`bbb"));
       });
     });
+
+    describe.only('List literal', function() {
+      it('should be empty array', function() {
+        expect(Sexpression.parse('()')).to.equal([]);
+      });
+    });
   });
 });
