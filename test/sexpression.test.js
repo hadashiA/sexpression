@@ -2,7 +2,7 @@ var expect = require('expect.js')
   , Sexpression = require('../');
 
 describe('Sexpression', function() {
-  describe.only('.intern()', function() {
+  describe('.intern()', function() {
     it('should have name property', function() {
       expect(Sexpression.intern('hoge')).to.have.property('name');
     });
@@ -58,32 +58,15 @@ describe('Sexpression', function() {
       });
     });
 
-    describe('Symbol literal', function() {
+    describe.only('Symbol literal', function() {
       it('should allow alphabet', function() {
-        expect(Sexpression.parse('a')).to.be('a');
-        expect(Sexpression.parse('abc')).to.be('abc');
-        expect(Sexpression.parse('A')).to.be('A');
-        expect(Sexpression.parse('DFA')).to.be('DFA');
+        expect(Sexpression.parse('a')).to.be(Sexpression.intern('a'));
+        expect(Sexpression.parse('hoge')).to.be(Sexpression.intern('hoge'));
       });
 
-      it('should invalid for "." only', function() {
-        expect(function() { Sexpression.parse('.') }).to.throwError();
-      });
-
-      it('should invalid for backquote', function() {
-        expect(function() { Sexpression.parse('`') }).to.throwError();
-      });
-
-      it('should invalid for backquote included', function() {
-        expect(function() { Sexpression.parse('aaa`aaa') }).to.throwError();
+      it('should split white space', function() {
+        expect(Sexpression.parse('cat dog')).to.be(Sexpression.intern('cat'));
       });
     });
-
-    // describe('List literal', function() {
-    //   it.only('should be empty array', function() {
-    //     expect([]).to.be([]);
-    //     // expect(Sexpression.parse('()')).to.be([]);
-    //   });
-    // });
   });
 });
