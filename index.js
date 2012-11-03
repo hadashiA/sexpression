@@ -1,7 +1,11 @@
-var stringify = (function () {
-  return function() {
-  };
-});
+var Symbol = function(name) {
+  this.name = name;
+};
+
+var ConsCell = function(car, cdr) {
+  this.car = car;
+  this.cdr = cdr;
+};
 
 var parse = (function() {
   var StringBuffer = (function() {
@@ -139,16 +143,36 @@ var parse = (function() {
       }
     },
 
+    list: function(buf) {
+      var result = []
+        , ch = buf.current();
+
+      if (ch !== '(') {
+        throw this.error(buf, "Invalid list");
+      }
+
+      while (ch && ch !== ')') {
+        ch = buf.read();
+      }
+
+      if (ch !== ')') {
+        throw this.error(buf, "Invalid list");
+      }
+
+      return result;
+    },
+
     sExpression: function(buf) {
       var ch = buf.readWhileBlank();
 
       switch (ch) {
         case '"':
         return this.string(buf);
+        case '(':
+        return this.list(buf);
         default:
         return this.symbol(buf)
       }
-      return this.number(buf);
     }
   }
 
@@ -158,7 +182,14 @@ var parse = (function() {
   };
 })();
 
+var stringify = (function () {
+  return function() {
+    new Error('no implemented');
+  };
+});
+
 var Sexpression = {
+  Symbol: Symbol,
   stringify: stringify,
   parse: parse
 };

@@ -2,6 +2,16 @@ var expect = require('expect.js')
   , Sexpression = require('../');
 
 describe('Sexpression', function() {
+  describe('.Symbol', function() {
+    it('should have name property', function() {
+      expect(new Sexpression.Symbol('hoge')).to.have.property('name');
+    });
+
+    it('should initialize name property', function() {
+      expect(new Sexpression.Symbol('hoge').name).to.equal('hoge');
+    });
+  });
+
   describe('.parse()', function() {
     describe('Number literal', function() {
       it('should be 1 digit number', function() {
@@ -44,7 +54,7 @@ describe('Sexpression', function() {
       });
     });
 
-    describe('Symbol', function() {
+    describe('Symbol literal', function() {
       it('should allow alphabet', function() {
         expect(Sexpression.parse('a')).to.be('a');
         expect(Sexpression.parse('abc')).to.be('abc');
@@ -64,5 +74,12 @@ describe('Sexpression', function() {
         expect(function() { Sexpression.parse('aaa`aaa') }).to.throwError();
       });
     });
+
+    // describe('List literal', function() {
+    //   it.only('should be empty array', function() {
+    //     expect([]).to.be([]);
+    //     // expect(Sexpression.parse('()')).to.be([]);
+    //   });
+    // });
   });
 });
