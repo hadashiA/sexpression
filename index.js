@@ -1,17 +1,33 @@
-var Symbol = function(name) {
-  this.name = name;
-};
+var intern = (function() {
+  var symbols = {};
 
-var ConsCell = function(car, cdr) {
-  this.car = car;
-  this.cdr = cdr;
-};
+  var Symbol = function(name) {
+    this.name = name;
+  };
+
+  Symbol.prototype.toString = function() {
+    if (this.name.length === 0) {
+      return '##';
+    } else {
+      return this.name.replace(/["'`, #]/g, function(escapee) {
+        return '\\' + escapee;
+      });
+    }
+  };
+
+  return function(name) {
+    if (!symbols[name]) {
+      symbols[name] = new Symbol(name);
+    }
+    return symbols[name];
+  };
+})();
 
 var parse = (function() {
   var StringBuffer = (function() {
     var StringBuffer = function(string) {
       this.string = string;
-      this.at     = -1;
+      this.at = -1;
     };
 
     StringBuffer.prototype.current = function() {
@@ -29,7 +45,7 @@ var parse = (function() {
       this.string += appended;
     };
 
-    StringBuffer.prototype.readWhileBlank = function() {
+    StringBuffer.prototype.skipWS = function() {
       var ch = this.read();
       while (ch && ch <= ' ') {
         ch = this.read();
@@ -78,68 +94,21 @@ var parse = (function() {
     },
 
     symbol: function(buf) {
-      var result = ''
+      var name = ''
         , ch = buf.current()
         , firstChar = true
-        , backSlashed = false
-        , escapee = {
-          '"': '"'
-        , "'": "'"
-        , '\\': '\\'
-        , '`': '`'
-        , ',': ','
-        , ' ': ' '
-        // , '#': '#'
-        };
+        , escaped = false;
 
-      var isSymbolChar = function() {
-        if (escapee[ch]) {
-          return backSlashed;
-        } else {
-          return ( ch === '!'
-                || ch === '$'
-                || ch === '%'
-                || ch === '&'
-                || ch === '*'
-                || ch === '+'
-                || ch === '-'
-                || ch === '.'
-                || ch === '/'
-                || (ch >= '0' && ch <= '9')
-                || ch === ':'
-                || ch === '<'
-                || ch === '>'
-                || ch === '='
-                || ch === '@'
-                || (ch >= 'A' && ch <= 'Z')
-                || ch === '^'
-                || ch === '_'
-                || (ch >= 'a' && ch <= 'z')
-                || ch === '{'
-                || ch === '}'
-                || ch === '|'
-                || ch === '~');
-        }
-      };
-
-      while (ch && ch !== ' ') {
-        if (!isSymbolChar()) {
-          throw this.error(buf, "Invalid symbol");
-        }
-
-        result += ch;
-        backSlashed = (ch === '\\');
+      while (ch && (escaped || ch !== ' ')) {
+        name += ch;
+        escaped = (!escaped && ch === '\\');
         ch = buf.read();
       }
 
-      if (result === '.' || result.length == 0) {
-        throw this.error(buf, "Invalid symbol");
-      }
-
-      if (isNaN(result - 0)) {
-        return result;
+      if (isNaN(name - 0)) {
+        return intern(name);
       } else {
-        return (result - 0);
+        return (name - 0);
       }
     },
 
@@ -163,7 +132,7 @@ var parse = (function() {
     },
 
     sExpression: function(buf) {
-      var ch = buf.readWhileBlank();
+      var ch = buf.skipWS();
 
       switch (ch) {
         case '"':
@@ -189,7 +158,7 @@ var stringify = (function () {
 });
 
 var Sexpression = {
-  Symbol: Symbol,
+  intern: intern,
   stringify: stringify,
   parse: parse
 };

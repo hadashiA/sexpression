@@ -2,13 +2,17 @@ var expect = require('expect.js')
   , Sexpression = require('../');
 
 describe('Sexpression', function() {
-  describe('.Symbol', function() {
+  describe.only('.intern()', function() {
     it('should have name property', function() {
-      expect(new Sexpression.Symbol('hoge')).to.have.property('name');
+      expect(Sexpression.intern('hoge')).to.have.property('name');
     });
 
     it('should initialize name property', function() {
-      expect(new Sexpression.Symbol('hoge').name).to.equal('hoge');
+      expect(Sexpression.intern('hoge').name).to.equal('hoge');
+    });
+
+    it('should equal same name symbol', function() {
+      expect(Sexpression.intern('hoge')).to.be(Sexpression.intern('hoge'));
     });
   });
 
