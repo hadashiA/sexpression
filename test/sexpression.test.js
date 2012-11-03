@@ -14,6 +14,10 @@ describe('Sexpression', function() {
     it('should equal same name symbol', function() {
       expect(Sexpression.intern('hoge')).to.be(Sexpression.intern('hoge'));
     });
+
+    it('should instanceof Symbol', function() {
+      expect(Sexpression.intern('abc')).to.be.a(Sexpression.intern('hoge').constructor);
+    });
   });
 
   describe('.parse()', function() {
@@ -58,14 +62,42 @@ describe('Sexpression', function() {
       });
     });
 
-    describe.only('Symbol literal', function() {
+    describe('Symbol literal', function() {
       it('should allow alphabet', function() {
         expect(Sexpression.parse('a')).to.be(Sexpression.intern('a'));
         expect(Sexpression.parse('hoge')).to.be(Sexpression.intern('hoge'));
       });
 
-      it('should split white space', function() {
+      it('should end before white space', function() {
         expect(Sexpression.parse('cat dog')).to.be(Sexpression.intern('cat'));
+      });
+
+      it('should end before double quote', function() {
+        expect(Sexpression.parse('cat"dog')).to.be(Sexpression.intern('cat'));
+      });
+
+      it('should end before single quote', function() {
+        expect(Sexpression.parse("cat'dog")).to.be(Sexpression.intern('cat'));
+      });
+
+      it('should end before back quote', function() {
+        expect(Sexpression.parse("cat`dog")).to.be(Sexpression.intern('cat'));
+      });
+
+      it('should escpae backslahed white space', function() {
+        expect(Sexpression.parse('aaa\\ bbb')).to.be(Sexpression.intern('aaa bbb'));
+      });
+
+      it('should escape backslashed double quote', function() {
+        expect(Sexpression.parse('aaa\\"bbb')).to.be(Sexpression.intern('aaa"bbb'));
+      });
+
+      it('should escape backslashed single quote', function() {
+        expect(Sexpression.parse("aaa\\'bbb")).to.be(Sexpression.intern("aaa'bbb"));
+      });
+
+      it('should escape backslashed back quote', function() {
+        expect(Sexpression.parse("aaa\\`bbb")).to.be(Sexpression.intern("aaa`bbb"));
       });
     });
   });

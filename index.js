@@ -97,11 +97,19 @@ var parse = (function() {
       var name = ''
         , ch = buf.current()
         , firstChar = true
-        , escaped = false;
+        , escaped = false
+        , escapee = {
+          '"': true,
+          "'": true,
+          '`': true,
+          ' ': true
+        };
 
-      while (ch && (escaped || ch !== ' ')) {
-        name += ch;
+      while (ch && (escaped || !escapee[ch])) {
         escaped = (!escaped && ch === '\\');
+        if (!escaped) {
+          name += ch;
+        }
         ch = buf.read();
       }
 
