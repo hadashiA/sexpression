@@ -32,12 +32,12 @@ var Symbol = (function() {
     }
   };
 
+  Symbol.intern = function(name) {
+    return new Symbol(name);
+  };
+
   return Symbol;
 })();
-
-var intern = function(name) {
-  return new Symbol(name);
-};
 
 var parse = (function() {
   var StringBuffer = (function() {
@@ -123,7 +123,7 @@ var parse = (function() {
       }
 
       if (isNaN(name - 0)) {
-        return intern(name);
+        return Symbol.intern(name);
       } else {
         return (name - 0);
       }
@@ -180,7 +180,6 @@ var stringify = (function () {
 
 var sexpression = module.exports = {
   Symbol: Symbol
-, intern: intern
 , stringify: stringify
 , parse: parse
 };

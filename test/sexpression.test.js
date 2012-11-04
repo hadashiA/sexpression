@@ -1,23 +1,24 @@
-var expect = require('expect.js')
+var util = require('util')
+  , expect = require('expect.js')
   , Sexpression = require('../')
-  , util = require('util');
+  , Symbol = Sexpression.Symbol;
 
 describe('Sexpression', function() {
   describe('.intern()', function() {
     it('should have name property', function() {
-      expect(Sexpression.intern('hoge')).to.have.property('name');
+      expect(Symbol.intern('hoge')).to.have.property('name');
     });
 
     it('should initialize name property', function() {
-      expect(Sexpression.intern('hoge').name).to.equal('hoge');
+      expect(Symbol.intern('hoge').name).to.equal('hoge');
     });
 
     it('should equal same name symbol', function() {
-      expect(Sexpression.intern('hoge')).to.be(Sexpression.intern('hoge'));
+      expect(Symbol.intern('hoge')).to.be(Symbol.intern('hoge'));
     });
 
     it('should instanceof Symbol', function() {
-      expect(Sexpression.intern('abc')).to.be.a(Sexpression.intern('hoge').constructor);
+      expect(Symbol.intern('abc')).to.be.a(Symbol.intern('hoge').constructor);
     });
   });
 
@@ -65,40 +66,40 @@ describe('Sexpression', function() {
 
     describe('Symbol literal', function() {
       it('should allow alphabet', function() {
-        expect(Sexpression.parse('a')).to.be(Sexpression.intern('a'));
-        expect(Sexpression.parse('hoge')).to.be(Sexpression.intern('hoge'));
+        expect(Sexpression.parse('a')).to.be(Symbol.intern('a'));
+        expect(Sexpression.parse('hoge')).to.be(Symbol.intern('hoge'));
       });
 
       it('should end before white space', function() {
-        expect(Sexpression.parse('cat dog')).to.be(Sexpression.intern('cat'));
+        expect(Sexpression.parse('cat dog')).to.be(Symbol.intern('cat'));
       });
 
       it('should end before double quote', function() {
-        expect(Sexpression.parse('cat"dog')).to.be(Sexpression.intern('cat'));
+        expect(Sexpression.parse('cat"dog')).to.be(Symbol.intern('cat'));
       });
 
       it('should end before single quote', function() {
-        expect(Sexpression.parse("cat'dog")).to.be(Sexpression.intern('cat'));
+        expect(Sexpression.parse("cat'dog")).to.be(Symbol.intern('cat'));
       });
 
       it('should end before back quote', function() {
-        expect(Sexpression.parse("cat`dog")).to.be(Sexpression.intern('cat'));
+        expect(Sexpression.parse("cat`dog")).to.be(Symbol.intern('cat'));
       });
 
       it('should escpae backslahed white space', function() {
-        expect(Sexpression.parse('aaa\\ bbb')).to.be(Sexpression.intern('aaa bbb'));
+        expect(Sexpression.parse('aaa\\ bbb')).to.be(Symbol.intern('aaa bbb'));
       });
 
       it('should escape backslashed double quote', function() {
-        expect(Sexpression.parse('aaa\\"bbb')).to.be(Sexpression.intern('aaa"bbb'));
+        expect(Sexpression.parse('aaa\\"bbb')).to.be(Symbol.intern('aaa"bbb'));
       });
 
       it('should escape backslashed single quote', function() {
-        expect(Sexpression.parse("aaa\\'bbb")).to.be(Sexpression.intern("aaa'bbb"));
+        expect(Sexpression.parse("aaa\\'bbb")).to.be(Symbol.intern("aaa'bbb"));
       });
 
       it('should escape backslashed back quote', function() {
-        expect(Sexpression.parse("aaa\\`bbb")).to.be(Sexpression.intern("aaa`bbb"));
+        expect(Sexpression.parse("aaa\\`bbb")).to.be(Symbol.intern("aaa`bbb"));
       });
     });
 
@@ -122,6 +123,12 @@ describe('Sexpression', function() {
         expect(subject).to.have.length(2);
         expect(subject[0]).to.be(100);
         expect(subject[1]).to.be(200);
+      });
+
+      it('should be symbol array', function() {
+        var subject = Sexpression.parse('(cat dog lemon water sparkling)');
+        expect(subject).to.be.an('array');
+        expect(subject).to.have.length(5);
       });
     });
   });
