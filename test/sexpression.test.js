@@ -102,7 +102,7 @@ describe('Sexpression', function() {
       });
     });
 
-    describe.only('List literal', function() {
+    describe('List literal', function() {
       it('should be empty array', function() {
         var subject = Sexpression.parse('()');
         expect(subject).to.be.an('array');
@@ -114,6 +114,14 @@ describe('Sexpression', function() {
         expect(subject).to.be.an('array');
         expect(subject).to.have.length(1);
         expect(subject[0]).to.be(1);
+      });
+
+      it('should be multiple number array', function() {
+        var subject = Sexpression.parse('(100 200)');
+        expect(subject).to.be.an('array');
+        expect(subject).to.have.length(2);
+        expect(subject[0]).to.be(100);
+        expect(subject[1]).to.be(200);
       });
     });
   });
