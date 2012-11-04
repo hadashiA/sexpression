@@ -1,5 +1,6 @@
 var expect = require('expect.js')
-  , Sexpression = require('../');
+  , Sexpression = require('../')
+  , util = require('util');
 
 describe('Sexpression', function() {
   describe('.intern()', function() {
@@ -103,7 +104,8 @@ describe('Sexpression', function() {
 
     describe.only('List literal', function() {
       it('should be empty array', function() {
-        expect(Sexpression.parse('()')).to.equal([]);
+        expect(Sexpression.parse('()')).to.be.an('array');
+        expect(Sexpression.parse('()')).to.be.empty();
       });
     });
   });

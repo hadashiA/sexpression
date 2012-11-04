@@ -165,10 +165,8 @@ var stringify = (function () {
   };
 });
 
-var Sexpression = {
+var Sexpression = module.exports = {
   intern: intern,
   stringify: stringify,
   parse: parse
 };
-
-module.exports = Sexpression;
