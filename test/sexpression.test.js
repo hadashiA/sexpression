@@ -159,6 +159,13 @@ describe('Sexpression', function() {
         var subject = Sexpression.parse('(1 2 (3 4) 5)');
         expect(subject).to.be.an('array');
         expect(subject).to.have.length(4);
+        expect(subject[0]).to.be(1);
+        expect(subject[1]).to.be(2);
+        expect(subject[2]).to.be.an('array');
+        expect(subject[2]).to.have.length(2);
+        expect(subject[2][0]).to.be(3);
+        expect(subject[2][1]).to.be(4);
+        expect(subject[3]).to.be(5);
       });
     });
   });
