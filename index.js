@@ -27,7 +27,7 @@ var parse = (function() {
   var StringBuffer = (function() {
     var StringBuffer = function(string) {
       this.string = string;
-      this.at = -1;
+      this.at = 0;
     };
 
     StringBuffer.prototype.current = function() {
@@ -46,11 +46,10 @@ var parse = (function() {
     };
 
     StringBuffer.prototype.skipWS = function() {
-      var ch = this.read();
-      while (ch && ch <= ' ') {
+      var ch = this.current();
+      while (ch && ch === ' ') {
         ch = this.read();
       }
-      return ch;
     };
 
     StringBuffer.prototype.eof = function() {
@@ -102,7 +101,9 @@ var parse = (function() {
           '"': true,
           "'": true,
           '`': true,
-          ' ': true
+          ' ': true,
+          '(': true,
+          ')': true
         };
 
       while (ch && (escaped || !escapee[ch])) {
@@ -130,6 +131,9 @@ var parse = (function() {
 
       while (ch && ch !== ')') {
         ch = buf.read();
+        if (ch === ')') break;
+        result.push(this.sExpression(buf));
+        ch = buf.current();
       }
 
       if (ch !== ')') {
@@ -140,7 +144,8 @@ var parse = (function() {
     },
 
     sExpression: function(buf) {
-      var ch = buf.skipWS();
+      buf.skipWS();
+      var ch = buf.current();
 
       switch (ch) {
         case '"':
@@ -165,7 +170,7 @@ var stringify = (function () {
   };
 });
 
-var Sexpression = module.exports = {
+var sexpression = module.exports = {
   intern: intern,
   stringify: stringify,
   parse: parse

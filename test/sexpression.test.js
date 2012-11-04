@@ -104,8 +104,16 @@ describe('Sexpression', function() {
 
     describe.only('List literal', function() {
       it('should be empty array', function() {
-        expect(Sexpression.parse('()')).to.be.an('array');
-        expect(Sexpression.parse('()')).to.be.empty();
+        var subject = Sexpression.parse('()');
+        expect(subject).to.be.an('array');
+        expect(subject).to.be.empty();
+      });
+
+      it('should be number array', function() {
+        var subject = Sexpression.parse('(1)')
+        expect(subject).to.be.an('array');
+        expect(subject).to.have.length(1);
+        expect(subject[0]).to.be(1);
       });
     });
   });
