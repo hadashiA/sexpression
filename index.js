@@ -1,27 +1,43 @@
-var intern = (function() {
-  var symbols = {};
+var Symbol = (function() {
+  var symbols = {}
+    , escapee =  {
+      '#': true,
+      '"': true,
+      "'": true,
+      '`': true,
+      ' ': true,
+      '(': true,
+      ')': true
+    };
 
   var Symbol = function(name) {
-    this.name = name;
+    if (!symbols[name]) {
+      this.name = name;
+      symbols[name] = this;
+    }
+    return symbols[name];
+  };
+
+  Symbol.mustBeEscapedChar = function(ch) {
+    return escapee[ch];
   };
 
   Symbol.prototype.toString = function() {
     if (this.name.length === 0) {
       return '##';
     } else {
-      return this.name.replace(/["'`, #]/g, function(escapee) {
-        return '\\' + escapee;
+      return this.name.replace(/[#"'`, \(\)]/g, function(escapee) {
+      return '\\' + escapee;
       });
     }
   };
 
-  return function(name) {
-    if (!symbols[name]) {
-      symbols[name] = new Symbol(name);
-    }
-    return symbols[name];
-  };
+  return Symbol;
 })();
+
+var intern = function(name) {
+  return new Symbol(name);
+};
 
 var parse = (function() {
   var StringBuffer = (function() {
@@ -96,17 +112,9 @@ var parse = (function() {
       var name = ''
         , ch = buf.current()
         , firstChar = true
-        , escaped = false
-        , escapee = {
-          '"': true,
-          "'": true,
-          '`': true,
-          ' ': true,
-          '(': true,
-          ')': true
-        };
+        , escaped = false;
 
-      while (ch && (escaped || !escapee[ch])) {
+      while (ch && (escaped || !Symbol.mustBeEscapedChar(ch))) {
         escaped = (!escaped && ch === '\\');
         if (!escaped) {
           name += ch;
@@ -171,7 +179,8 @@ var stringify = (function () {
 });
 
 var sexpression = module.exports = {
-  intern: intern,
-  stringify: stringify,
-  parse: parse
+  Symbol: Symbol
+, intern: intern
+, stringify: stringify
+, parse: parse
 };
