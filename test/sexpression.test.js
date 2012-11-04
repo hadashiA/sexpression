@@ -129,6 +129,30 @@ describe('Sexpression', function() {
         var subject = Sexpression.parse('(cat dog lemon water sparkling)');
         expect(subject).to.be.an('array');
         expect(subject).to.have.length(5);
+        expect(subject[0]).to.be(Symbol.intern('cat'));
+        expect(subject[1]).to.be(Symbol.intern('dog'));
+        expect(subject[2]).to.be(Symbol.intern('lemon'));
+        expect(subject[3]).to.be(Symbol.intern('water'));
+        expect(subject[4]).to.be(Symbol.intern('sparkling'));
+      });
+
+      it('should be string array', function() {
+        var subject = Sexpression.parse('("ヤ" "ヤメ" "ヤメロー")');
+        expect(subject).to.be.an('array');
+        expect(subject).to.have.length(3);
+        expect(subject[0]).to.be("ヤ");
+        expect(subject[1]).to.be("ヤメ");
+        expect(subject[2]).to.be("ヤメロー");
+      });
+
+      it('should be mixed array', function() {
+        var subject = Sexpression.parse('("ヤメロー" 1 hogemogu "とりゃー")');
+        expect(subject).to.be.an('array');
+        expect(subject).to.have.length(4);
+        expect(subject[0]).to.be("ヤメロー");
+        expect(subject[1]).to.be(1);
+        expect(subject[2]).to.be(Symbol.intern('hogemogu'));
+        expect(subject[3]).to.be("とりゃー");
       });
     });
   });
