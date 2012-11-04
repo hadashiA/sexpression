@@ -154,6 +154,12 @@ describe('Sexpression', function() {
         expect(subject[2]).to.be(Symbol.intern('hogemogu'));
         expect(subject[3]).to.be("とりゃー");
       });
+
+      it('should be nested array', function() {
+        var subject = Sexpression.parse('(1 2 (3 4) 5)');
+        expect(subject).to.be.an('array');
+        expect(subject).to.have.length(4);
+      });
     });
   });
 });

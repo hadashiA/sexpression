@@ -147,6 +147,7 @@ var parse = (function() {
       if (ch !== ')') {
         throw this.error(buf, "Invalid list");
       }
+      buf.read();
 
       return result;
     },
