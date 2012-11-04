@@ -4,7 +4,7 @@ var util = require('util')
   , Symbol = Sexpression.Symbol;
 
 describe('Sexpression', function() {
-  describe('.intern()', function() {
+  describe('.Symbol.intern()', function() {
     it('should have name property', function() {
       expect(Symbol.intern('hoge')).to.have.property('name');
     });

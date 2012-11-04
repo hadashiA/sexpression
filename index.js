@@ -40,6 +40,15 @@ var Symbol = (function() {
   return Symbol;
 })();
 
+var Cons = (function() {
+  var Cons = function(car, cdr) {
+    this.car = car;
+    this.cdr = cdr;
+  };
+
+  return Cons;
+})();
+
 var parse = (function() {
   var StringBuffer = (function() {
     var StringBuffer = function(string) {
@@ -182,6 +191,7 @@ var stringify = (function () {
 
 var sexpression = module.exports = {
   Symbol: Symbol
+, Cons: Cons
 , stringify: stringify
 , parse: parse
 };
