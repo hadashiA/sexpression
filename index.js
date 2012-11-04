@@ -7,7 +7,8 @@ var Symbol = (function() {
       '`': true,
       ' ': true,
       '(': true,
-      ')': true
+      ')': true,
+      '.': true
     };
 
   var Symbol = function(name) {
@@ -26,7 +27,7 @@ var Symbol = (function() {
     if (this.name.length === 0) {
       return '##';
     } else {
-      return this.name.replace(/[#"'`, \(\)]/g, function(escapee) {
+      return this.name.replace(/[#"'`, \(\)\.]/g, function(escapee) {
       return '\\' + escapee;
       });
     }
