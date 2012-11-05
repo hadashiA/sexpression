@@ -63,9 +63,16 @@ var Cons = (function() {
   };
 
   Cons.prototype.size = function() {
-    var count;
-    this.forEach(function(v, i) { count = i });
-    return count + 1;
+    var car = this.car
+      , cdr = this.cdr
+      , i = 1;
+
+    while (cdr) {
+      car = cdr.car
+      cdr = cdr.cdr;
+      i++;
+    }
+    return i;
   };
 
   Cons.prototype.nth = Cons.prototype.at =
