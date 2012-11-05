@@ -1,171 +1,138 @@
 var util = require('util')
   , expect = require('expect.js')
-  , Sexpression = require('../')
-  , Symbol = Sexpression.Symbol;
+  , sexpression = require('../')
+  , Symbol = sexpression.Symbol
+  , intern = Symbol.intern;
 
-describe('Sexpression', function() {
-  describe('.Symbol.intern()', function() {
+describe('sexpression', function() {
+  describe('.intern()', function() {
     it('should have name property', function() {
-      expect(Symbol.intern('hoge')).to.have.property('name');
+      expect(intern('hoge')).to.have.property('name');
     });
 
     it('should initialize name property', function() {
-      expect(Symbol.intern('hoge').name).to.equal('hoge');
+      expect(intern('hoge').name).to.equal('hoge');
     });
 
     it('should equal same name symbol', function() {
-      expect(Symbol.intern('hoge')).to.be(Symbol.intern('hoge'));
+      expect(intern('hoge')).to.be(intern('hoge'));
     });
 
     it('should instanceof Symbol', function() {
-      expect(Symbol.intern('abc')).to.be.a(Symbol.intern('hoge').constructor);
+      expect(intern('abc')).to.be.a(intern('hoge').constructor);
     });
   });
 
   describe('.parse()', function() {
     describe('Number literal', function() {
       it('should be 1 digit number', function() {
-        expect(Sexpression.parse('1')).to.be(1);
+        expect(sexpression.parse('1')).to.be(1);
       });
 
       it('should be multiple digit number', function() {
-        expect(Sexpression.parse('392038029380')).to.be(392038029380);
+        expect(sexpression.parse('392038029380')).to.be(392038029380);
       });
 
       it('should be number of minutes', function() {
-        expect(Sexpression.parse('-124')).to.be(-124);
+        expect(sexpression.parse('-124')).to.be(-124);
       });
 
       it('should be decimal number', function() {
-        expect(Sexpression.parse('10.309')).to.be(10.309);
+        expect(sexpression.parse('10.309')).to.be(10.309);
       });
     });
 
     describe('String literal', function() {
       it('should be blank string', function() {
-        expect(Sexpression.parse('""')).to.be('');
+        expect(sexpression.parse('""')).to.be('');
       });
 
       it('should be string', function() {
-        expect(Sexpression.parse('"hogehoge"')).to.be('hogehoge');
-        expect(Sexpression.parse('"aaa bbb cccc ()())) -**x&&789"')).to.be("aaa bbb cccc ()())) -**x&&789");
+        expect(sexpression.parse('"hogehoge"')).to.be('hogehoge');
+        expect(sexpression.parse('"aaa bbb cccc ()())) -**x&&789"')).to.be("aaa bbb cccc ()())) -**x&&789");
       });
 
       it('should be multi byte string', function() {
-        expect(Sexpression.parse('"あいうえお熊"')).to.be('あいうえお熊');
+        expect(sexpression.parse('"あいうえお熊"')).to.be('あいうえお熊');
       });
 
       it('should be \\n', function() {
-        expect(Sexpression.parse('"\n"')).to.be('\n');
+        expect(sexpression.parse('"\n"')).to.be('\n');
       });
 
       it('should be \\t', function() {
-        expect(Sexpression.parse('"\t"')).to.be('\t');
+        expect(sexpression.parse('"\t"')).to.be('\t');
       });
     });
 
     describe('Symbol literal', function() {
       it('should allow alphabet', function() {
-        expect(Sexpression.parse('a')).to.be(Symbol.intern('a'));
-        expect(Sexpression.parse('hoge')).to.be(Symbol.intern('hoge'));
+        expect(sexpression.parse('a')).to.be(intern('a'));
+        expect(sexpression.parse('hoge')).to.be(intern('hoge'));
       });
 
       it('should end before white space', function() {
-        expect(Sexpression.parse('cat dog')).to.be(Symbol.intern('cat'));
+        expect(sexpression.parse('cat dog')).to.be(intern('cat'));
       });
 
       it('should end before double quote', function() {
-        expect(Sexpression.parse('cat"dog')).to.be(Symbol.intern('cat'));
+        expect(sexpression.parse('cat"dog')).to.be(intern('cat'));
       });
 
       it('should end before single quote', function() {
-        expect(Sexpression.parse("cat'dog")).to.be(Symbol.intern('cat'));
+        expect(sexpression.parse("cat'dog")).to.be(intern('cat'));
       });
 
       it('should end before back quote', function() {
-        expect(Sexpression.parse("cat`dog")).to.be(Symbol.intern('cat'));
+        expect(sexpression.parse("cat`dog")).to.be(intern('cat'));
       });
 
       it('should escpae backslahed white space', function() {
-        expect(Sexpression.parse('aaa\\ bbb')).to.be(Symbol.intern('aaa bbb'));
+        expect(sexpression.parse('aaa\\ bbb')).to.be(intern('aaa bbb'));
       });
 
       it('should escape backslashed double quote', function() {
-        expect(Sexpression.parse('aaa\\"bbb')).to.be(Symbol.intern('aaa"bbb'));
+        expect(sexpression.parse('aaa\\"bbb')).to.be(intern('aaa"bbb'));
       });
 
       it('should escape backslashed single quote', function() {
-        expect(Sexpression.parse("aaa\\'bbb")).to.be(Symbol.intern("aaa'bbb"));
+        expect(sexpression.parse("aaa\\'bbb")).to.be(intern("aaa'bbb"));
       });
 
       it('should escape backslashed back quote', function() {
-        expect(Sexpression.parse("aaa\\`bbb")).to.be(Symbol.intern("aaa`bbb"));
+        expect(sexpression.parse("aaa\\`bbb")).to.be(intern("aaa`bbb"));
       });
     });
 
     describe('List literal', function() {
       it('should be empty array', function() {
-        var subject = Sexpression.parse('()');
-        expect(subject).to.be.an('array');
-        expect(subject).to.be.empty();
+        expect(sexpression.parse('()')).to.eql([]);
       });
 
       it('should be number array', function() {
-        var subject = Sexpression.parse('(1)')
-        expect(subject).to.be.an('array');
-        expect(subject).to.have.length(1);
-        expect(subject[0]).to.be(1);
+        expect(sexpression.parse('(1)')).to.eql([1]);
       });
 
       it('should be multiple number array', function() {
-        var subject = Sexpression.parse('(100 200)');
-        expect(subject).to.be.an('array');
-        expect(subject).to.have.length(2);
-        expect(subject[0]).to.be(100);
-        expect(subject[1]).to.be(200);
+        expect(sexpression.parse('(100 200)')).to.eql([100, 200]);
       });
 
       it('should be symbol array', function() {
-        var subject = Sexpression.parse('(cat dog lemon water sparkling)');
-        expect(subject).to.be.an('array');
-        expect(subject).to.have.length(5);
-        expect(subject[0]).to.be(Symbol.intern('cat'));
-        expect(subject[1]).to.be(Symbol.intern('dog'));
-        expect(subject[2]).to.be(Symbol.intern('lemon'));
-        expect(subject[3]).to.be(Symbol.intern('water'));
-        expect(subject[4]).to.be(Symbol.intern('sparkling'));
+        expect(sexpression.parse('(cat dog lemon)')).to.
+          eql([ intern('cat'), intern('dog'), intern('lemon')]);
       });
 
       it('should be string array', function() {
-        var subject = Sexpression.parse('("ヤ" "ヤメ" "ヤメロー")');
-        expect(subject).to.be.an('array');
-        expect(subject).to.have.length(3);
-        expect(subject[0]).to.be("ヤ");
-        expect(subject[1]).to.be("ヤメ");
-        expect(subject[2]).to.be("ヤメロー");
+        expect(sexpression.parse('("ヤ" "ヤメ" "ヤメロー")')).to.eql(["ヤ", "ヤメ", "ヤメロー"]);
       });
 
       it('should be mixed array', function() {
-        var subject = Sexpression.parse('("ヤメロー" 1 hogemogu "とりゃー")');
-        expect(subject).to.be.an('array');
-        expect(subject).to.have.length(4);
-        expect(subject[0]).to.be("ヤメロー");
-        expect(subject[1]).to.be(1);
-        expect(subject[2]).to.be(Symbol.intern('hogemogu'));
-        expect(subject[3]).to.be("とりゃー");
+        expect(sexpression.parse('("ヤメロー" 1 hogemogu "とりゃー")')).to
+        .eql(["ヤメロー", 1, intern('hogemogu'), "とりゃー"]);
       });
 
       it('should be nested array', function() {
-        var subject = Sexpression.parse('(1 2 (3 4) 5)');
-        expect(subject).to.be.an('array');
-        expect(subject).to.have.length(4);
-        expect(subject[0]).to.be(1);
-        expect(subject[1]).to.be(2);
-        expect(subject[2]).to.be.an('array');
-        expect(subject[2]).to.have.length(2);
-        expect(subject[2][0]).to.be(3);
-        expect(subject[2][1]).to.be(4);
-        expect(subject[3]).to.be(5);
+        expect(sexpression.parse('(1 2 (3 4) 5)')).to.eql([1, 2, [3, 4], 5]);
       });
     });
   });

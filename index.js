@@ -71,10 +71,14 @@ var parse = (function() {
     };
 
     StringBuffer.prototype.skipWS = function() {
-      var ch = this.current();
+      var ch     = this.current()
+        , skiped = false;
       while (ch && ch === ' ') {
+        skiped = true;
         ch = this.read();
       }
+
+      return skiped;
     };
 
     StringBuffer.prototype.eof = function() {
@@ -140,7 +144,8 @@ var parse = (function() {
 
     list: function(buf) {
       var result = []
-        , ch = buf.current();
+        , ch = buf.current()
+        , value;
 
       if (ch !== '(') {
         throw this.error(buf, "Invalid list");
@@ -149,7 +154,8 @@ var parse = (function() {
       while (ch && ch !== ')') {
         ch = buf.read();
         if (ch === ')') break;
-        result.push(this.sExpression(buf));
+        value = this.sExpression(buf);
+        result.push(value);
         ch = buf.current();
       }
 
