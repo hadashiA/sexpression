@@ -108,17 +108,16 @@ var parse = (function() {
       }
 
       ch = buf.read();
-      while (ch) {
-        if (ch === '"') {
-          return result;
-        }
-
+      while (ch && ch !== '"') {
         result += ch;
         ch = buf.read();
       }
 
-      throw this.error(buf, 'Bad string');
-      return null;
+      if (ch !== '"') {
+        throw this.error(buf, 'Bad string');
+      }
+      buf.read();
+      return result;
     },
 
     symbol: function(buf) {
@@ -151,11 +150,11 @@ var parse = (function() {
         throw this.error(buf, "Invalid list");
       }
 
+      ch = buf.read();
       while (ch && ch !== ')') {
-        ch = buf.read();
-        if (ch === ')') break;
         value = this.sExpression(buf);
         result.push(value);
+        buf.skipWS();
         ch = buf.current();
       }
 
