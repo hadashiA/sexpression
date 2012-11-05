@@ -51,6 +51,14 @@ var Cons = (function() {
   return Cons;
 })();
 
+var list = function(array) {
+  if (array.length) {
+    return new Cons(array[0], list(array.slice(1, array.length)));
+  } else {
+    return null;
+  }
+};
+
 var parse = (function() {
   var StringBuffer = (function() {
     var StringBuffer = function(string) {
@@ -166,7 +174,7 @@ var parse = (function() {
       }
       buf.read();
 
-      return list;
+      return new Cons(list);
     },
 
     sExpression: function(buf) {
@@ -199,6 +207,7 @@ var stringify = (function () {
 var sexpression = module.exports = {
   Symbol: Symbol
 , Cons: Cons
+, list: list
 , stringify: stringify
 , parse: parse
 };

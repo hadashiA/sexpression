@@ -110,8 +110,12 @@ describe('sexpression', function() {
     });
 
     describe('List literal', function() {
-      it('should be empty array', function() {
-        expect(sexpression.parse('()')).to.eql([]);
+      it.only('should be empty array', function() {
+        var subject = sexpression.parse('()');
+        expect(subject).to.be.a(Cons);
+        console.log(subject);
+        expect(subject.car).to.be(undefined)
+        expect(subject.cdr).to.be(undefined)
       });
 
       it('should be number array', function() {
