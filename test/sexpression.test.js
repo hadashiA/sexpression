@@ -1,8 +1,9 @@
-var util = require('util')
-  , expect = require('expect.js')
+var util        = require('util')
+  , expect      = require('expect.js')
   , sexpression = require('../')
-  , Symbol = sexpression.Symbol
-  , intern = Symbol.intern;
+  , Symbol      = sexpression.Symbol
+  , Cons        = sexpression.Cons
+  , intern      = Symbol.intern;
 
 describe('sexpression', function() {
   describe('Symbol.intern()', function() {
@@ -137,6 +138,10 @@ describe('sexpression', function() {
 
       it('should be nested array', function() {
         expect(sexpression.parse('(1 2 (3 4) 5)')).to.eql([1, 2, [3, 4], 5]);
+      });
+
+      it('should be cons cell', function() {
+        expect(sexpression.parse('(hoge . fuga)')).to.be.a(Cons);
       });
     });
   });

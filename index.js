@@ -144,7 +144,8 @@ var parse = (function() {
     list: function(buf) {
       var result = []
         , ch = buf.current()
-        , value;
+        , value
+        , car;
 
       if (ch !== '(') {
         throw this.error(buf, "Invalid list");
@@ -153,8 +154,15 @@ var parse = (function() {
       ch = buf.read();
       while (ch && ch !== ')') {
         value = this.sExpression(buf);
-        result.push(value);
-        buf.skipWS();
+        // cons
+        if (value instanceof Symbol && value.name === '.' && result.length) {
+          value = new Cons(result.pop(), this.sExpression(buf));
+        }
+        if (value instanceof Cons && result.length === 0) {
+          result = value
+        } else {
+          result.push(value);
+        }
         ch = buf.current();
       }
 
