@@ -194,17 +194,30 @@ var parse = (function() {
     },
 
     list: function(buf) {
-      var array = []
+      var first = new Cons(null)
         , ch = buf.current()
-        , value;
+        , value
+        , cons;
 
       if (ch !== '(') {
         throw this.error(buf, "Invalid list");
       }
 
+      cons = first;
+
       ch = buf.read();
       while (ch && ch !== ')') {
-        array.push(this.sExpression(buf));
+        cons.car = this.sExpression(buf);
+        if (value instanceof Symbol && value.name === '.' && buf.skipWS()) {
+          if (buf.current() === ')') break;
+
+          cons.cdr = this.sExpression(buf);
+          buf.skipWS();
+          if (buf.current() !== ')') {
+            throw this.error(buf, "Wrong context '.'");
+          }
+        }
+        cons.cdr = cons = new Cons();
         ch = buf.current();
       }
 
@@ -212,8 +225,13 @@ var parse = (function() {
         throw this.error(buf, "Invalid list");
       }
       buf.read();
+      cons.cdr = null;
 
-      return list(array);
+      if (first.car == null) {
+        return null;
+      } else {
+        return first;
+      }
     },
 
     sExpression: function(buf) {
