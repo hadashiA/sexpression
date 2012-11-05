@@ -3,10 +3,11 @@ var util        = require('util')
   , sexpression = require('../')
   , Symbol      = sexpression.Symbol
   , Cons        = sexpression.Cons
-  , intern      = Symbol.intern;
+  , intern      = sexpression.intern
+  , list        = sexpression.list;
 
 describe('sexpression', function() {
-  describe('Symbol.intern()', function() {
+  describe('.intern()', function() {
     it('should have name property', function() {
       expect(intern('hoge')).to.have.property('name');
     });
@@ -21,6 +22,39 @@ describe('sexpression', function() {
 
     it('should instanceof Symbol', function() {
       expect(intern('abc')).to.be.a(Symbol);
+    });
+  });
+
+  describe.only('.list()', function() {
+    it('should to null from empty array', function() {
+      expect(list([])).to.be(null);
+    });
+
+    it('should to single cons cell', function() {
+      expect(list([1])).to.be.a(Cons);
+      expect(list([1]).car).to.be(1);
+      expect(list([1]).cdr).to.be(null);
+    });
+
+    it('should to linked cons cell', function() {
+      var subject = list([1, 2]);
+      expect(subject).to.be.a(Cons);
+      expect(subject.car).to.be(1);
+      expect(subject.cdr).to.be.a(Cons);
+      expect(subject.cdr.car).to.be(2);
+      expect(subject.cdr.cdr).to.be(null);
+    });
+
+    it('should parse size', function() {
+      var subject = list([1, 2, 3, 4, 5]);
+      expect(subject.size()).to.be(5);
+    });
+
+    it('should to be loop', function() {
+      var subject = ["a", "b", "c"];
+      list(subject).forEach(function(v, i) {
+        expect(v).to.be(subject[i]);
+      });
     });
   });
 
@@ -110,7 +144,7 @@ describe('sexpression', function() {
     });
 
     describe('List literal', function() {
-      it.only('should be empty array', function() {
+      it('should be empty array', function() {
         var subject = sexpression.parse('()');
         expect(subject).to.be.a(Cons);
         console.log(subject);

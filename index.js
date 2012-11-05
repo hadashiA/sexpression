@@ -20,7 +20,7 @@ var Symbol = (function() {
     return symbols[name];
   };
 
-  Symbol.mustBeEscapedChar = function(ch) {
+  Symbol.endChar = function(ch) {
     return escapee[ch];
   };
 
@@ -46,6 +46,25 @@ var Cons = (function() {
     this.car    = car;
     this.cdr    = cdr;
     this.quoted = !!quoted;
+  };
+
+  Cons.prototype.forEach = function(callback) {
+    var car = this.car
+      , cdr = this.cdr
+      , i = 0;
+
+    callback(car, i++);
+    while (cdr) {
+      car = cdr.car
+      cdr = cdr.cdr;
+      callback(car, i++);
+    }
+  };
+
+  Cons.prototype.size = function() {
+    var count;
+    this.forEach(function(v, i) { count = i });
+    return count + 1;
   };
 
   return Cons;
@@ -137,7 +156,7 @@ var parse = (function() {
         , firstChar = true
         , escaped = false;
 
-      while (ch && (escaped || !Symbol.mustBeEscapedChar(ch))) {
+      while (ch && (escaped || !Symbol.endChar(ch))) {
         escaped = (!escaped && ch === '\\');
         if (!escaped) {
           name += ch;
@@ -207,6 +226,7 @@ var stringify = (function () {
 var sexpression = module.exports = {
   Symbol: Symbol
 , Cons: Cons
+, intern: Symbol.intern
 , list: list
 , stringify: stringify
 , parse: parse
