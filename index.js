@@ -51,13 +51,14 @@ var Cons = (function() {
   Cons.prototype.forEach = function(callback) {
     var car = this.car
       , cdr = this.cdr
+      , result = true
       , i = 0;
 
-    callback(car, i++);
-    while (cdr) {
+    result = callback(car, i++);
+    while (result && cdr) {
       car = cdr.car
       cdr = cdr.cdr;
-      callback(car, i++);
+      result = callback(car, i++);
     }
   };
 
@@ -65,6 +66,20 @@ var Cons = (function() {
     var count;
     this.forEach(function(v, i) { count = i });
     return count + 1;
+  };
+
+  Cons.prototype.nth = Cons.prototype.at =
+    function(index) {
+    var result;
+    this.forEach(function(v, i) {
+      if (index === i) {
+        result = v;
+        return false
+      } else {
+        return true;
+      }
+    });
+    return result;
   };
 
   return Cons;
@@ -172,9 +187,7 @@ var parse = (function() {
     },
 
     list: function(buf) {
-      var list = []
-        , car
-        , cdr
+      var array = []
         , ch = buf.current()
         , value;
 
@@ -184,7 +197,7 @@ var parse = (function() {
 
       ch = buf.read();
       while (ch && ch !== ')') {
-        list.push(this.sExpression(buf));
+        array.push(this.sExpression(buf));
         ch = buf.current();
       }
 
@@ -193,7 +206,7 @@ var parse = (function() {
       }
       buf.read();
 
-      return new Cons(list);
+      return list(array);
     },
 
     sExpression: function(buf) {

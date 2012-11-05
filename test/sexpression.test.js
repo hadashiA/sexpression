@@ -25,7 +25,7 @@ describe('sexpression', function() {
     });
   });
 
-  describe.only('.list()', function() {
+  describe('.list()', function() {
     it('should to null from empty array', function() {
       expect(list([])).to.be(null);
     });
@@ -143,44 +143,64 @@ describe('sexpression', function() {
       });
     });
 
-    describe('List literal', function() {
+    describe.only('List literal', function() {
       it('should be empty array', function() {
-        var subject = sexpression.parse('()');
-        expect(subject).to.be.a(Cons);
-        console.log(subject);
-        expect(subject.car).to.be(undefined)
-        expect(subject.cdr).to.be(undefined)
+        expect(sexpression.parse('()')).to.be(null);
       });
 
       it('should be number array', function() {
-        expect(sexpression.parse('(1)')).to.eql([1]);
+        var subject = sexpression.parse('(1)');
+        expect(subject).to.be.a(Cons);
+        expect(subject.car).to.be(1);
+        expect(subject.cdr).to.be(null);
       });
 
       it('should be multiple number array', function() {
-        expect(sexpression.parse('(100 200)')).to.eql([100, 200]);
+        var subject = sexpression.parse('(100 200)');
+        expect(subject).to.be.a(Cons);
+        expect(subject.nth(0)).to.be(100);
+        expect(subject.nth(1)).to.be(200);
       });
 
       it('should be symbol array', function() {
-        expect(sexpression.parse('(cat dog lemon)')).to.
-          eql([ intern('cat'), intern('dog'), intern('lemon')]);
+        var subject = sexpression.parse('(cat dog lemon)');
+        expect(subject).to.be.a(Cons);
+        expect(subject.nth(0)).to.be(intern('cat'));
+        expect(subject.nth(1)).to.be(intern('dog'));
+        expect(subject.nth(2)).to.be(intern('lemon'));
       });
 
       it('should be string array', function() {
-        expect(sexpression.parse('("ヤ" "ヤメ" "ヤメロー")')).to.eql(["ヤ", "ヤメ", "ヤメロー"]);
+        var subject = sexpression.parse('("ヤ" "ヤメ" "ヤメロー")');
+        expect(subject).to.be.a(Cons);
+        expect(subject.nth(0)).to.be("ヤ");
+        expect(subject.nth(1)).to.be("ヤメ");
+        expect(subject.nth(2)).to.be("ヤメロー");
       });
 
       it('should be mixed array', function() {
-        expect(sexpression.parse('("ヤメロー" 1 hogemogu "とりゃー")')).to
-        .eql(["ヤメロー", 1, intern('hogemogu'), "とりゃー"]);
+        var subject = sexpression.parse('("ヤメロー" 1 hogemogu "とりゃー")');
+        expect(subject).to.be.a(Cons);
+        expect(subject.nth(0)).to.be("ヤメロー");
+        expect(subject.nth(1)).to.be(1);
+        expect(subject.nth(2)).to.be(intern('hogemogu'));
+        expect(subject.nth(3)).to.be('とりゃー');
       });
 
       it('should be nested array', function() {
-        expect(sexpression.parse('(1 2 (3 4) 5)')).to.eql([1, 2, [3, 4], 5]);
+        var subject = sexpression.parse('(1 2 (3 4) 5)');
+        expect(subject).to.be.a(Cons);
+        expect(subject.nth(0)).to.be(1);
+        expect(subject.nth(1)).to.be(2);
+        expect(subject.nth(2)).to.be.a(Cons);
+        expect(subject.nth(2).nth(0)).to.be(3);
+        expect(subject.nth(2).nth(1)).to.be(4);
+        expect(subject.nth(3)).to.be(5);
       });
 
-      // it('should be cons cell', function() {
-      //   expect(sexpression.parse('(hoge . fuga)')).to.be.a(Cons);
-      // });
+      it('should be cons cell', function() {
+        expect(sexpression.parse('(hoge . fuga)')).to.be.a(Cons);
+      });
 
       // it('should ignore name "." symbol', function() {
       //   expect(sexpression.parse('(. b)')).to.eql([intern('b')]);
