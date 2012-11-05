@@ -7,8 +7,7 @@ var Symbol = (function() {
       '`': true,
       ' ': true,
       '(': true,
-      ')': true,
-      '.': true
+      ')': true
     };
 
   var Symbol = function(name) {
