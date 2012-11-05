@@ -55,7 +55,7 @@ var Cons = (function() {
       , i = 0;
 
     result = callback(car, i++);
-    while (result && cdr) {
+    while (result !== false && cdr) {
       car = cdr.car
       cdr = cdr.cdr;
       result = callback(car, i++);
