@@ -10,9 +10,11 @@ var Symbol = (function() {
       ')': true
     };
 
-  var Symbol = function(name) {
+  var Symbol = function(name, quoted) {
     if (!symbols[name]) {
       this.name = name;
+      this.quoted = !!quoted;
+
       symbols[name] = this;
     }
     return symbols[name];
@@ -40,9 +42,10 @@ var Symbol = (function() {
 })();
 
 var Cons = (function() {
-  var Cons = function(car, cdr) {
-    this.car = car;
-    this.cdr = cdr;
+  var Cons = function(car, cdr, quoted) {
+    this.car    = car;
+    this.cdr    = cdr;
+    this.quoted = !!quoted;
   };
 
   return Cons;
@@ -142,10 +145,11 @@ var parse = (function() {
     },
 
     list: function(buf) {
-      var result = []
+      var list = []
+        , car
+        , cdr
         , ch = buf.current()
-        , value
-        , car;
+        , value;
 
       if (ch !== '(') {
         throw this.error(buf, "Invalid list");
@@ -153,16 +157,7 @@ var parse = (function() {
 
       ch = buf.read();
       while (ch && ch !== ')') {
-        value = this.sExpression(buf);
-        // cons
-        if (value instanceof Symbol && value.name === '.' && result.length) {
-          value = new Cons(result.pop(), this.sExpression(buf));
-        }
-        if (value instanceof Cons && result.length === 0) {
-          result = value
-        } else {
-          result.push(value);
-        }
+        list.push(this.sExpression(buf));
         ch = buf.current();
       }
 
@@ -171,7 +166,7 @@ var parse = (function() {
       }
       buf.read();
 
-      return result;
+      return list;
     },
 
     sExpression: function(buf) {
