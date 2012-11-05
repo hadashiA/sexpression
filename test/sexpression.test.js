@@ -11,7 +11,7 @@ describe('sexpression', function() {
     });
 
     it('should initialize name property', function() {
-      expect(intern('hoge').name).to.equal('hoge');
+      expect(intern('hoge').name).to.be('hoge');
     });
 
     it('should equal same name symbol', function() {
@@ -19,7 +19,7 @@ describe('sexpression', function() {
     });
 
     it('should instanceof Symbol', function() {
-      expect(intern('abc')).to.be.a(intern('hoge').constructor);
+      expect(intern('abc')).to.be.a(Symbol);
     });
   });
 
@@ -39,6 +39,10 @@ describe('sexpression', function() {
 
       it('should be decimal number', function() {
         expect(sexpression.parse('10.309')).to.be(10.309);
+      });
+
+      it('should be decimal number of minutes', function() {
+        expect(sexpression.parse('-900.2456')).to.be(-900.2456);
       });
     });
 
