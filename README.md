@@ -25,6 +25,12 @@ sexpression.generate({ car: 1, cdr: 2})  //=> '(1 . 2)'
 sexpression.generate([{ car: { name: 'hoge'}, cdr: 1}, { car: { name: 'fuga' }, cdr: 2 }])
 //=> '((hoge . 1) (fuga . 2))'
 
-sexpression.generaet({ a: 1, b: 2}) //=> '(("a" . 1) ("b" . 2))'
+sexpression.generaet({ a: 1, b: 2})                    //=> '(("a" . 1) ("b" . 2))'
+sexpression.generate([1, { hoge: 1, fuga: 2 }, "aaa"]) //=> '(1 (('hoge' . 1) ('fuga' . 2)) 'aaa')'
+```
+
+```javascript
+sexpression.generaet({ a: 1, b: 2}, 'keylist')                     //=> '(:a 1 :b 2)'
+sexpression.generate([1, { hoge: 1, fuga: 2 }, "aaa"], 'keylist')  //=> '(1 (:hoge 1 :fuga 2) "aaa")'
 ```
 

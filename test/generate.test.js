@@ -78,5 +78,19 @@ describe('generate()', function() {
     it('should be symbol from object', function() {
       expect(generate({ name: 'hoge' })).to.be('hoge');
     });
+
+    it('should specify keyword list from object', function() {
+      expect(generate({ a: 1, b: 2 }, 'keylist')).to.be('(:a 1 :b 2)');
+    });
+
+    it('should alist from object nested', function() {
+      expect(generate([1, { hoge: 1, fuga: 2 }, "aaa"])).to
+      .be('(1 (("hoge" . 1) ("fuga" . 2)) "aaa")');
+    });
+
+    it('should specify keyword list from object nested', function() {
+      expect(generate([1, { hoge: 1, fuga: 2 }, "aaa"], 'keylist')).to
+      .be('(1 (:hoge 1 :fuga 2) "aaa")');
+    });
   });
 });
