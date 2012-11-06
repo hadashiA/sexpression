@@ -192,10 +192,11 @@ var parse = (function() {
     },
 
     list: function(buf) {
-      var ch    = buf.current()
-        , first = null
-        , cons
-        , value;
+      var ch = buf.current()
+        , first
+        , cons;
+
+      first = cons = new Cons();
 
       if (ch !== '(') {
         throw this.error(buf, "Invalid list");
@@ -204,12 +205,7 @@ var parse = (function() {
       buf.skipWS();
       ch = buf.read();
       while (ch && ch !== ')') {
-        value = this.sExpression(buf);
-        if (!cons) {
-          first = cons = new Cons(value, null);
-        } else {
-          cons.car = value;
-        }
+        cons.car = this.sExpression(buf);
 
         buf.skipWS();
         ch = buf.current();
@@ -224,7 +220,7 @@ var parse = (function() {
       }
       buf.read();
 
-      return first;
+      return (first.car == null ? null : first);
     },
 
     sExpression: function(buf) {
