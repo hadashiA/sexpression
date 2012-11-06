@@ -24,5 +24,7 @@ sexpression.generate([{ name: 'a' }, { name: 'b' }, [1, 2], 'a']) //=> '(a b (1 
 sexpression.generate({ car: 1, cdr: 2})  //=> '(1 . 2)'
 sexpression.generate([{ car: { name: 'hoge'}, cdr: 1}, { car: { name: 'fuga' }, cdr: 2 }])
 //=> '((hoge . 1) (fuga . 2))'
+
+sexpression.generaet({ a: 1, b: 2}) //=> '(("a" . 1) ("b" . 2))'
 ```
 
