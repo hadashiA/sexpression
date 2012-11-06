@@ -10,10 +10,9 @@ var Symbol = (function() {
       ')': true
     };
 
-  var Symbol = function(name, quoted) {
+  var Symbol = function(name) {
     if (!symbols[name]) {
       this.name = name;
-      this.quoted = !!quoted;
 
       symbols[name] = this;
     }
@@ -42,10 +41,9 @@ var Symbol = (function() {
 })();
 
 var Cons = (function() {
-  var Cons = function(car, cdr, quoted) {
-    this.car    = car;
-    this.cdr    = cdr;
-    this.quoted = !!quoted;
+  var Cons = function(car, cdr) {
+    this.car = (car == null ? null : car);
+    this.cdr = (cdr == null ? null : cdr);
   };
 
   Cons.prototype.forEach = function(callback) {
@@ -194,44 +192,39 @@ var parse = (function() {
     },
 
     list: function(buf) {
-      var first = new Cons(null)
-        , ch = buf.current()
-        , value
-        , cons;
+      var ch    = buf.current()
+        , first = null
+        , cons
+        , value;
 
       if (ch !== '(') {
         throw this.error(buf, "Invalid list");
       }
 
-      cons = first;
-
+      buf.skipWS();
       ch = buf.read();
       while (ch && ch !== ')') {
-        cons.car = this.sExpression(buf);
-        if (value instanceof Symbol && value.name === '.' && buf.skipWS()) {
-          if (buf.current() === ')') break;
-
-          cons.cdr = this.sExpression(buf);
-          buf.skipWS();
-          if (buf.current() !== ')') {
-            throw this.error(buf, "Wrong context '.'");
-          }
+        value = this.sExpression(buf);
+        if (!cons) {
+          first = cons = new Cons(value, null);
+        } else {
+          cons.car = value;
         }
-        cons.cdr = cons = new Cons();
+
+        buf.skipWS();
         ch = buf.current();
+        if (ch === ')') break;
+
+        cons.cdr = new Cons();
+        cons = cons.cdr;
       }
 
       if (ch !== ')') {
         throw this.error(buf, "Invalid list");
       }
       buf.read();
-      cons.cdr = null;
 
-      if (first.car == null) {
-        return null;
-      } else {
-        return first;
-      }
+      return first;
     },
 
     sExpression: function(buf) {
