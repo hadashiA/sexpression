@@ -3,8 +3,8 @@ var expect      = require('expect.js')
   , parse       = sexpression.parse
   , intern      = sexpression.intern;
 
-describe('.parse()', function() {
-  describe('Number literal', function() {
+describe('parse()', function() {
+  describe('number literal', function() {
     it('should be 1 digit number', function() {
       expect(parse('1')).to.be(1);
     });
@@ -26,7 +26,7 @@ describe('.parse()', function() {
     });
   });
 
-  describe('String literal', function() {
+  describe('string literal', function() {
     it('should be blank string', function() {
       expect(parse('""')).to.be('');
     });
@@ -49,7 +49,7 @@ describe('.parse()', function() {
     });
   });
 
-  describe('Symbol literal', function() {
+  describe('symbol literal', function() {
     it('should allow alphabet', function() {
       expect(parse('a')).to.be(intern('a'));
       expect(parse('hoge')).to.be(intern('hoge'));
@@ -96,7 +96,7 @@ describe('.parse()', function() {
     });
   });
 
-  describe('List literal', function() {
+  describe('list literal', function() {
     it('should be empty array', function() {
       expect(parse('()')).to.be(null);
     });
