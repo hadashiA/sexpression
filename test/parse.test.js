@@ -1,10 +1,8 @@
 var util        = require('util')
   , expect      = require('expect.js')
   , sexpression = require('../')
-  , Symbol      = sexpression.Symbol
   , Cons        = sexpression.Cons
-  , intern      = sexpression.intern
-  , list        = sexpression.list;
+  , intern      = sexpression.intern;
 
 describe('.parse()', function() {
   describe('Number literal', function() {
@@ -88,6 +86,14 @@ describe('.parse()', function() {
 
     it('should escape backslashed back quote', function() {
       expect(sexpression.parse("aaa\\`bbb")).to.be(intern("aaa`bbb"));
+    });
+
+    it('should be "t" to true', function() {
+      expect(sexpression.parse('t')).to.be(true);
+    });
+
+    it('should be "nil" to null', function() {
+      expect(sexpression.parse('nil')).to.be(null);
     });
   });
 
