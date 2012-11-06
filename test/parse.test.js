@@ -1,7 +1,6 @@
 var util        = require('util')
   , expect      = require('expect.js')
   , sexpression = require('../')
-  , Cons        = sexpression.Cons
   , intern      = sexpression.intern;
 
 describe('.parse()', function() {
@@ -103,64 +102,62 @@ describe('.parse()', function() {
     });
 
     it('should be number array', function() {
-      var subject = sexpression.parse('(1)');
-      expect(subject).to.be.a(Cons);
-      expect(subject.car).to.be(1);
-      expect(subject.cdr).to.be(null);
+      expect(sexpression.parse('(1)')).to.eql([1]);
     });
 
     it('should be multiple number array', function() {
-      var subject = sexpression.parse('(100 200)');
-      expect(subject).to.be.a(Cons);
-      expect(subject.nth(0)).to.be(100);
-      expect(subject.nth(1)).to.be(200);
+      expect(sexpression.parse('(100 200)')).to.eql([100, 200]);
     });
 
     it('should be symbol array', function() {
-      var subject = sexpression.parse('(cat dog lemon)');
-      expect(subject).to.be.a(Cons);
-      expect(subject.nth(0)).to.be(intern('cat'));
-      expect(subject.nth(1)).to.be(intern('dog'));
-      expect(subject.nth(2)).to.be(intern('lemon'));
+      expect(sexpression.parse('(cat dog lemon)')).to
+      .eql([intern('cat'), intern('dog'), intern('lemon')]);
     });
 
     it('should be string array', function() {
-      var subject = sexpression.parse('("ヤ" "ヤメ" "ヤメロー")');
-      expect(subject).to.be.a(Cons);
-      expect(subject.nth(0)).to.be("ヤ");
-      expect(subject.nth(1)).to.be("ヤメ");
-      expect(subject.nth(2)).to.be("ヤメロー");
+      expect(sexpression.parse('("ヤ" "ヤメ" "ヤメロー")')).to.eql(['ヤ', 'ヤメ', 'ヤメロー']);
     });
 
     it('should be mixed array', function() {
-      var subject = sexpression.parse('("ヤメロー" 1 hogemogu "とりゃー")');
-      expect(subject).to.be.a(Cons);
-      expect(subject.nth(0)).to.be("ヤメロー");
-      expect(subject.nth(1)).to.be(1);
-      expect(subject.nth(2)).to.be(intern('hogemogu'));
-      expect(subject.nth(3)).to.be('とりゃー');
+      expect(sexpression.parse('("ヤメロー" 1 hogemogu "とりゃー")')).to
+      .eql(['ヤメロー', 1, intern('hogemogu'), 'とりゃー']);
     });
 
     it('should be nested array', function() {
-      var subject = sexpression.parse('(1 2 (3 4) 5)');
-      expect(subject).to.be.a(Cons);
-      expect(subject.nth(0)).to.be(1);
-      expect(subject.nth(1)).to.be(2);
-      expect(subject.nth(2)).to.be.a(Cons);
-      expect(subject.nth(2).nth(0)).to.be(3);
-      expect(subject.nth(2).nth(1)).to.be(4);
-      expect(subject.nth(3)).to.be(5);
+      expect(sexpression.parse('(1 2 (3 4) 5)')).to.eql([1, 2, [3, 4], 5]);
     });
 
-    // it('should be cons cell', function() {
-    //   var subject = sexpression.parse('(hoge . fuga)');
-    //   expect(subject).to.be.a(Cons);
-    //   expect(subject.car).to.be(intern('hoge'));
-    //   expect(subject.cdr).to.be(intern('fuga'));
-    // });
+    it('should be cons cell', function() {
+      expect(sexpression.parse('(hoge . fuga)')).to.eql({ car: intern('hoge'),
+                                                          cdr: intern('fuga') });
+    });
 
-    // it('should ignore name "." symbol', function() {
-    //   expect(sexpression.parse('(. b)')).to.be(intern('b'));
-    // });
+    it('should ignore name "." symbol', function() {
+      expect(sexpression.parse('(. b)')).to.be(intern('b'));
+    });
+
+    it('should error if cons after value', function() {
+      expect(function() { sexpression.parse('(a . b c)') }).throwException();
+    });
+
+    it('should error if cons cdr not found', function() {
+      expect(function() { sexpression.parse('(a . )') }).throwException();
+    });
+
+    it('should parse "." symbol', function() {
+      expect(sexpression.parse('(.)')).to.eql([intern('.')]);
+      expect(sexpression.parse('(a .)')).to.eql([intern('a'), intern('.')]);
+    });
+
+    it('should be contains of cons cell list', function() {
+      expect(sexpression.parse('(a b . c)')).to
+      .eql([intern('a'), { car: intern('b'), cdr: intern('c') }]);
+    });
+
+    it('should be alist', function() {
+      expect(sexpression.parse('((a . b) (c . d))')).to
+      .eql([{ car: intern('a'), cdr: intern('b') },
+            { car: intern('c'), cdr: intern('d') }]);
+    });
   });
 });
