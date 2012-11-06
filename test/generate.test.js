@@ -74,5 +74,9 @@ describe('generate()', function() {
     it('should be alist from object', function() {
       expect(generate({ a: 1, b: 2 })).to.be('(("a" . 1) ("b" . 2))');
     });
+
+    it('should be symbol from object', function() {
+      expect(generate({ name: 'hoge' })).to.be('hoge');
+    });
   });
 });
