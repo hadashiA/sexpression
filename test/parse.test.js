@@ -173,5 +173,13 @@ describe('parse()', function() {
                                                       , { hoge: 1, fuga: 2 }
                                                       , intern('c')]);
     });
+
+    it('should be separate \\n', function() {
+      expect(parse('(1\n2)')).to.eql([1, 2]);
+    });
+
+    it('should be separate \\t', function() {
+      expect(parse('(1\t2)')).to.eql([1, 2]);
+    });
   });
 });
