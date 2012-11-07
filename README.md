@@ -1,3 +1,9 @@
+## Installation
+
+```shell
+npm install sexpression
+```
+
 ## Usage
 
 ```javascript

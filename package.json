@@ -1,6 +1,6 @@
 {
   "name": "sexpression",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "s-expression parser",
   "main": "index.js",
   "scripts": {
@@ -13,8 +13,7 @@
   "keywords": [
     "s-expression",
     "sexp",
-    "sexpression",
-    "emacs"
+    "sexpression"
   ],
   "devDependencies": {
     "mocha": "*",
