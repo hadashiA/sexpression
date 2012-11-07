@@ -17,7 +17,7 @@ sexpression.parse('((hoge . 1) (fuga . 2))')
 ```
 
 ```javascript
-sexpression.stringify([]);           //=> null
+sexpression.stringify([]);           //=> 'nil'
 sexpression.stringify([1, -2, 3.45]) //=> '(1 -2 3.45)'
 sexpression.stringify([{ name: 'a' }, { name: 'b' }, [1, 2], 'a']) //=> '(a b (1 2) "a")'
 
