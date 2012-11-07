@@ -158,5 +158,20 @@ describe('parse()', function() {
       expect(parse('((a . b) (c . d))')).to.eql([{ car: intern('a'), cdr: intern('b') },
                                                  { car: intern('c'), cdr: intern('d') }]);
     });
+
+    it('should be object from keylist', function() {
+      expect(parse('(:a 1 :b 2)')).to.eql({ a: 1, b: 2 });
+    });
+
+    it('should null value object from break keylist', function() {
+      expect(parse('(:a)')).to.eql({ a: null });
+    });
+
+    it('should be inner object array from keylist contans list', function() {
+      expect(parse('(a b :hoge 1 :fuga 2 c)')).to.eql([ intern('a')
+                                                      , intern('b')
+                                                      , { hoge: 1, fuga: 2 }
+                                                      , intern('c')]);
+    });
   });
 });
