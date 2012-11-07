@@ -26,17 +26,15 @@ sexpression.stringify([{ car: { name: 'hoge'}, cdr: 1}, { car: { name: 'fuga' },
 
 sexpression.stringify({ a: 1, b: 2})                    //=> '(("a" . 1) ("b" . 2))'
 sexpression.stringify([1, { hoge: 1, fuga: 2 }, "aaa"]) //=> '(1 (('hoge' . 1) ('fuga' . 2)) 'aaa')'
+
+sexpression.stringify({ a: 1, b: 2}, 'keylist')                     //=> '(:a 1 :b 2)'
+sexpression.stringify([1, { hoge: 1, fuga: 2 }, "aaa"], 'keylist')  //=> '(1 (:hoge 1 :fuga 2) "aaa")'
 ```
 
 ```javascript
 sexpression.parse('hoge')  //=> { name: 'hoge' }
 sexpression.parse('hoge') instanceof sexpression.Symbol  //=> true
 sexpression.parse('hoge') === sexpression.parse('hoge')  //=> true
-```
-
-```javascript
-sexpression.stringify({ a: 1, b: 2}, 'keylist')                     //=> '(:a 1 :b 2)'
-sexpression.stringify([1, { hoge: 1, fuga: 2 }, "aaa"], 'keylist')  //=> '(1 (:hoge 1 :fuga 2) "aaa")'
 ```
 
 
