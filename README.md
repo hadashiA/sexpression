@@ -19,18 +19,24 @@ sexpression.parse('((hoge . 1) (fuga . 2))')
 ```javascript
 sexpression.generate([]);           //=> null
 sexpression.generate([1, -2, 3.45]) //=> '(1 -2 3.45)'
-sexpression.generate([{ name: 'a' }, { name: 'b' }, [1, 2], 'a']) //=> '(a b (1 2) "a")'
+sexpression.generate([{ name: 'a' }, { name: 'b' }, [1, 2], 'a'])  //=> '(a b (1 2) "a")'
 
 sexpression.generate({ car: 1, cdr: 2})  //=> '(1 . 2)'
-sexpression.generate([{ car: { name: 'hoge'}, cdr: 1}, { car: { name: 'fuga' }, cdr: 2 }])
-//=> '((hoge . 1) (fuga . 2))'
+sexpression.generate([{ car: { name: 'hoge'}, cdr: 1}, { car: { name: 'fuga' }, cdr: 2 }])  //=> '((hoge . 1) (fuga . 2))'
 
 sexpression.generaet({ a: 1, b: 2})                    //=> '(("a" . 1) ("b" . 2))'
 sexpression.generate([1, { hoge: 1, fuga: 2 }, "aaa"]) //=> '(1 (('hoge' . 1) ('fuga' . 2)) 'aaa')'
 ```
 
 ```javascript
+sexpression.parse('hoge')  //=> { name: 'hoge' }
+sexpression.parse('hoge') instanceof sexpression.Symbol  //=> true
+sexpression.parse('hoge') === sexpression.parse('hoge')  //=> true
+```
+
+```javascript
 sexpression.generaet({ a: 1, b: 2}, 'keylist')                     //=> '(:a 1 :b 2)'
 sexpression.generate([1, { hoge: 1, fuga: 2 }, "aaa"], 'keylist')  //=> '(1 (:hoge 1 :fuga 2) "aaa")'
 ```
+
 
