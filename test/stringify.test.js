@@ -72,7 +72,7 @@ describe('stringify()', function() {
     });
 
     it('should be alist from object', function() {
-      expect(stringify({ a: 1, b: 2 })).to.be('(("a" . 1) ("b" . 2))');
+      expect(stringify({ a: 1, b: 2 }, 'alist')).to.be('(("a" . 1) ("b" . 2))');
     });
 
     it('should be symbol from object', function() {
@@ -80,16 +80,16 @@ describe('stringify()', function() {
     });
 
     it('should specify keyword list from object', function() {
-      expect(stringify({ a: 1, b: 2 }, 'keylist')).to.be('(:a 1 :b 2)');
+      expect(stringify({ a: 1, b: 2 })).to.be('(:a 1 :b 2)');
     });
 
     it('should alist from object nested', function() {
-      expect(stringify([1, { hoge: 1, fuga: 2 }, "aaa"])).to
+      expect(stringify([1, { hoge: 1, fuga: 2 }, "aaa"], 'alist')).to
       .be('(1 (("hoge" . 1) ("fuga" . 2)) "aaa")');
     });
 
     it('should specify keyword list from object nested', function() {
-      expect(stringify([1, { hoge: 1, fuga: 2 }, "aaa"], 'keylist')).to
+      expect(stringify([1, { hoge: 1, fuga: 2 }, "aaa"])).to
       .be('(1 (:hoge 1 :fuga 2) "aaa")');
     });
   });

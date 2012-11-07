@@ -30,11 +30,11 @@ sexpression.stringify([{ name: 'a' }, { name: 'b' }, [1, 2], 'a']) //=> '(a b (1
 sexpression.stringify({ car: 1, cdr: 2})  //=> '(1 . 2)'
 sexpression.stringify([{ car: { name: 'hoge'}, cdr: 1}, { car: { name: 'fuga' }, cdr: 2 }])  //=> '((hoge . 1) (fuga . 2))'
 
-sexpression.stringify({ a: 1, b: 2})                    //=> '(("a" . 1) ("b" . 2))'
-sexpression.stringify([1, { hoge: 1, fuga: 2 }, "aaa"]) //=> '(1 (('hoge' . 1) ('fuga' . 2)) 'aaa')'
+sexpression.stringify({ a: 1, b: 2})                     //=> '(:a 1 :b 2)'
+sexpression.stringify([1, { hoge: 1, fuga: 2 }, "aaa"])  //=> '(1 (:hoge 1 :fuga 2) "aaa")'
+sexpression.stringify({ a: 1, b: 2}, 'alist)                    //=> '(("a" . 1) ("b" . 2))'
+sexpression.stringify([1, { hoge: 1, fuga: 2 }, "aaa"], 'alist) //=> '(1 (('hoge' . 1) ('fuga' . 2)) 'aaa')'
 
-sexpression.stringify({ a: 1, b: 2}, 'keylist')                     //=> '(:a 1 :b 2)'
-sexpression.stringify([1, { hoge: 1, fuga: 2 }, "aaa"], 'keylist')  //=> '(1 (:hoge 1 :fuga 2) "aaa")'
 ```
 
 ```javascript
