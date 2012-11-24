@@ -1,6 +1,6 @@
 {
   "name": "sexpression",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "s-expression parser",
   "main": "index.js",
   "scripts": {

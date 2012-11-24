@@ -184,6 +184,10 @@ describe('parse()', function() {
 
     it('should be nested 1 length list', function() {
       expect(parse('((1))')).to.eql([[1]]);
+      expect(parse('((a))')).to.eql([[{ name: 'a' }]]);
+
+      expect(parse('(((((1)))))')).to.eql([[[[[1]]]]]);
+      expect(parse('(((((a)))))')).to.eql([[[[[{ name: 'a' }]]]]]);
     });
   });
 });
