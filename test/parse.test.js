@@ -181,5 +181,9 @@ describe('parse()', function() {
     it('should be separate \\t', function() {
       expect(parse('(1\t2)')).to.eql([1, 2]);
     });
+
+    it('should be nested 1 length list', function() {
+      expect(parse('((1))')).to.eql([[1]]);
+    });
   });
 });
