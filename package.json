@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:f-kubotar/sexpression.git"
+    "url": "git@github.com:hadashiA/sexpression.git"
   },
   "keywords": [
     "s-expression",
