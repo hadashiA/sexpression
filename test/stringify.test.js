@@ -1,94 +1,94 @@
-var expect      = require('expect.js')
-  , sexpression = require('../')
-  , stringify   = sexpression.stringify
-  , intern      = sexpression.Symbol.intern;
+var expect      = require('expect.js');
+var sexpression = require('../');
+var stringify   = sexpression.stringify;
+var intern      = sexpression.Symbol.intern;
 
-describe('stringify()', function() {
-  describe('number', function() {
-    it('should stringify number', function() {
+describe('stringify()', () => {
+  describe('number', () => {
+    it('should stringify number', () => {
       expect(stringify(1122)).to.be('1122');
     });
 
-    it('should stringify decimal number', function() {
+    it('should stringify decimal number', () => {
       expect(stringify(12.31)).to.be('12.31');
     });
 
-    it('should stringify minus number', function() {
+    it('should stringify minus number', () => {
       expect(stringify(-189)).to.be('-189');
     });
 
-    it('should stringify decimal minus number', function() {
+    it('should stringify decimal minus number', () => {
       expect(stringify(-100.98)).to.be('-100.98');
     });
   });
 
-  describe('string', function() {
-    it('should double quoted', function() {
+  describe('string', () => {
+    it('should double quoted', () => {
       expect(stringify('aiueo')).to.be('"aiueo"');
     });
   });
 
-  describe('boolean', function() {
-    it('should to "t" from true', function() {
+  describe('boolean', () => {
+    it('should to "t" from true', () => {
       expect(stringify(true)).to.be('t');
     });
 
-    it('should to "nil" from false', function() {
+    it('should to "nil" from false', () => {
       expect(stringify(false)).to.be('nil');
     });
   });
 
-  describe('object', function() {
-    it('should to "nil" from null', function() {
+  describe('object', () => {
+    it('should to "nil" from null', () => {
       expect(stringify(null)).to.be('nil');
     });
 
-    it('should to be symbol name', function() {
+    it('should to be symbol name', () => {
       expect(stringify(intern('a'))).to.be(intern('a').toString());
     });
 
-    it('should to be cons cell', function() {
+    it('should to be cons cell', () => {
       expect(stringify({ car: 1, cdr: 2 })).to.be('(1 . 2)');
     });
 
-    it('should to be null from empty', function() {
+    it('should to be null from empty', () => {
       expect(stringify([])).to.be('nil');
     });
 
-    it('should be number list from number array', function() {
+    it('should be number list from number array', () => {
       expect(stringify([1, 2, 3])).to.be('(1 2 3)');
     });
 
-    it('should be nested list', function() {
+    it('should be nested list', () => {
       expect(stringify([1, [2, 3], 4, 5])).to.be('(1 (2 3) 4 5)');
     });
 
-    it('should be string list from string array', function() {
+    it('should be string list from string array', () => {
       expect(stringify(["a", "b", "c"])).to.be('("a" "b" "c")');
     });
 
-    it('should be mixed list from mixed array', function() {
+    it('should be mixed list from mixed array', () => {
       expect(stringify([1, "abcde", intern('hoge')])).to.be('(1 "abcde" hoge)');
     });
 
-    it('should be alist from object', function() {
+    it('should be alist from object', () => {
       expect(stringify({ a: 1, b: 2 }, 'alist')).to.be('(("a" . 1) ("b" . 2))');
     });
 
-    it('should be symbol from object', function() {
+    it('should be symbol from object', () => {
       expect(stringify({ name: 'hoge' })).to.be('hoge');
     });
 
-    it('should specify keyword list from object', function() {
+    it('should specify keyword list from object', () => {
       expect(stringify({ a: 1, b: 2 })).to.be('(:a 1 :b 2)');
     });
 
-    it('should alist from object nested', function() {
+    it('should alist from object nested', () => {
       expect(stringify([1, { hoge: 1, fuga: 2 }, "aaa"], 'alist')).to
       .be('(1 (("hoge" . 1) ("fuga" . 2)) "aaa")');
     });
 
-    it('should specify keyword list from object nested', function() {
+    it('should specify keyword list from object nested', () => {
       expect(stringify([1, { hoge: 1, fuga: 2 }, "aaa"])).to
       .be('(1 (:hoge 1 :fuga 2) "aaa")');
     });
